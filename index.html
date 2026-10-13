@@ -109,10 +109,14 @@ section.sheet>h2 .allpass{text-transform:none;letter-spacing:0;font-size:12px}
 .row .notes input{font-size:15px;padding:7px 10px}
 .row.missing{box-shadow:inset 4px 0 0 var(--warn);background:var(--warn-soft)}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.seg button{font:inherit;font-weight:700;font-size:14px;border:0;background:var(--sheet);color:var(--muted);padding:0 16px;min-height:44px;min-width:66px;cursor:pointer}
+.seg button{font:inherit;font-weight:700;font-size:14px;border:0;background:var(--sheet);color:var(--muted);padding:0 12px;min-height:44px;min-width:58px;cursor:pointer}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[data-v=pass][aria-pressed=true]{background:var(--pass);color:#fff}
 .seg button[data-v=fail][aria-pressed=true]{background:var(--fail);color:#fff}
+.seg button[data-v=note][aria-pressed=true]{background:var(--warn);color:#fff}
+.row.want-notes .notes{display:block}
+.row.want-notes .addnote{display:none}
+.row.below .addnote,.row.below .notes{grid-row:4}
 .seg .auto{font-weight:500;font-size:10px;display:block;opacity:.85;line-height:1}
 .meas{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .meas .val{position:relative;flex:1 1 140px;min-width:0}
@@ -142,7 +146,8 @@ td.tgt{font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:n
 .pad img{position:absolute;left:12px;top:10px;width:calc(100% - 24px);height:calc(100% - 20px);object-fit:contain}
 .pad .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;color:#006557;font-weight:700;font-size:15px}
 .pad.has .hint{display:none}
-.row.noted .name::after{content:"Counts as pass (see notes)";display:block;font-size:12px;font-weight:600;color:var(--pass)}
+.row.noted .name::after{content:"Validated by notes";display:block;font-size:12px;font-weight:600;color:var(--warn)}
+.row.want-notes.missing .notes input{border-color:var(--warn)}
 .sheetSign{position:fixed;inset:0;z-index:50;background:var(--sheet);display:flex;flex-direction:column;gap:10px;
   padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(12px + env(safe-area-inset-bottom,0px));touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none}
 .sgHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -343,7 +348,8 @@ let saveT;
 function persist(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));if(S["s.engName"])localStorage.setItem(ENGKEY,S["s.engName"])}catch(e){}},250)}
 function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function seg(k){return `<div class="seg" role="group"><button type="button" data-k="${k}" data-v="pass" aria-pressed="false">Pass</button><button type="button" data-k="${k}" data-v="fail" aria-pressed="false">Fail</button></div>`}
+function seg(k){return `<div class="seg" role="group"><button type="button" data-k="${k}" data-v="pass" aria-pressed="false">Pass</button><button type="button" data-k="${k}" data-v="fail" aria-pressed="false">Fail</button><button type="button" data-k="${k}" data-v="note" aria-pressed="false">Notes</button></div>`}
+const RLABEL={pass:"Pass",fail:"Fail",note:"Notes"};
 
 // Build pass/fail check sections
 const addNote=`<button type="button" class="addnote" data-addnote>+ Add note</button>`;
@@ -363,16 +369,17 @@ document.getElementById("elecRows").innerHTML=ELEC.map(([id,name,unit,,op,lim])=
     ${addNote}<div class="notes"><input type="text" id="en_${id}" data-k="e.${id}.n" placeholder="Notes" enterkeyhint="next"></div>
   </div>`).join("");
 
+const noteBox=k=>`${addNote}<div class="notes"><input type="text" id="${k.replace(/\./g,'_')}" data-k="${k}" placeholder="Notes" enterkeyhint="next"></div>`;
 const cell=(lab,k,ph)=>`<label><span>${lab}</span><input type="text" inputmode="decimal" enterkeyhint="next" id="${k.replace(/\./g,'_')}" data-k="${k}"${ph?` placeholder="${ph}"`:""}></label>`;
 document.getElementById("powerRows").innerHTML=
   [[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>`<div class="row below" data-row="p.a${n}"><div class="name">${lab}</div>${seg(`p.a${n}.r`)}
-    <div class="cells">${cell("Max (W)",mk)}${cell("Setting 1",`p.a${n}.1`)}${cell("Setting 2",`p.a${n}.2`)}${cell("Setting 3",`p.a${n}.3`)}</div></div>`).join("");
+    <div class="cells">${cell("Max (W)",mk)}${cell("Setting 1",`p.a${n}.1`)}${cell("Setting 2",`p.a${n}.2`)}${cell("Setting 3",`p.a${n}.3`)}</div>${noteBox(`p.a${n}.n`)}</div>`).join("");
 
 document.getElementById("energy").innerHTML=[["L","Left"],["R","Right"]].map(([s,lab])=>`
   <div class="sub">${lab}</div>
   ${[1,2,3].map(i=>`<div class="row below" data-row="g.${s}${i}"><div class="name">Test ${i}</div>${seg(`g.${s}${i}.r`)}
     <div class="cells c3">${cell("Watts × 10 s",`g.${s}${i}.w`,"W")}${cell("Record (J)",`g.${s}${i}.rec`,"J")}
-    <div class="tgtc"><span>Target</span><b id="tgt_${s}${i}">– J</b></div></div></div>`).join("")}`).join("");
+    <div class="tgtc"><span>Target</span><b id="tgt_${s}${i}">– J</b></div></div>${noteBox(`g.${s}${i}.n`)}</div>`).join("")}`).join("");
 
 document.getElementById("equip").innerHTML=EQUIP.map(([id,n,sn,m])=>`<label><input type="checkbox" id="q_${id}" data-k="q.${id}"><span><b>${esc(n)}</b><small>${esc(sn)} · ${esc(m)}</small></span></label>`).join("");
 
@@ -387,7 +394,7 @@ function fill(){
   document.querySelectorAll("[data-k]").forEach(el=>{
     const k=el.dataset.k;
     if(el.tagName==="BUTTON"){el.setAttribute("aria-pressed",String(S[k]===el.dataset.v));
-      const autoK=k.replace(/\.r$/,".auto"); el.innerHTML=(el.dataset.v==="pass"?"Pass":"Fail")+(S[k]===el.dataset.v&&S[autoK]?'<span class="auto">auto</span>':"");}
+      const autoK=k.replace(/\.r$/,".auto"); el.innerHTML=RLABEL[el.dataset.v]+(S[k]===el.dataset.v&&S[autoK]?'<span class="auto">auto</span>':"");}
     else if(el.type==="checkbox") el.checked=!!S[k];
     else el.value=S[k]??"";
   });
@@ -410,7 +417,9 @@ document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset
   const m=k.match(/^e\.(\w+)\.v$/); if(m){autoElec(m[1]); fill();} else if(k==="e.amps"||k==="e.volts"){fill();} else {if(k.startsWith("g."))targets(); status();}
   persist();});
 document.addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;
-  const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();});
+  const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();
+  // "Notes" needs the reason written down: open the notes box
+  if(S[k]==="note"){const inp=b.closest(".row").querySelector(".notes input");if(inp&&!inp.value.trim())inp.focus()}});
 document.getElementById("plus1y").onclick=()=>{const d=S["h.date"]?new Date(S["h.date"]+"T12:00"):new Date();d.setFullYear(d.getFullYear()+1);
   S["h.next"]=d.toISOString().slice(0,10);fill();persist();};
 
@@ -443,27 +452,30 @@ document.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.target.tagName!=="
   const i=all.indexOf(e.target);if(i>-1&&all[i+1])all[i+1].focus();else e.target.blur();});
 
 // Completeness
-function resultOf(k){const r=S[k+".r"];if(r)return r;if((S[k+".n"]||"").trim())return "pass-notes";return ""}
+// "note" = validated by notes (neither pass nor fail); it only counts once a note is written.
+// A note typed without choosing a result also counts as validated by notes.
+function resultOf(k){const r=S[k+".r"], note=!!(S[k+".n"]||"").trim();
+  if(r==="note")return note?"note":"";if(r)return r;return note?"note":""}
 function missing(){
   const out=[];
   CHECKS.forEach(sec=>sec.items.forEach(([id,name])=>{if(!resultOf(`c.${sec.id}.${id}`))out.push(["c."+sec.id+"."+id,name])}));
   ELEC.forEach(([id,name])=>{if(!resultOf("e."+id))out.push(["e."+id,name])});
-  [1,2].forEach(n=>{const any=[1,2,3].some(i=>(S[`p.a${n}.${i}`]||"").trim());if(any&&!S[`p.a${n}.r`])out.push(["p.a"+n,"Max power "+(n===1?"left":"right")])});
-  ["L","R"].forEach(s=>[1,2,3].forEach(i=>{const any=(S[`g.${s}${i}.w`]||"").trim()||(S[`g.${s}${i}.rec`]||"").trim();if(any&&!S[`g.${s}${i}.r`])out.push([`g.${s}${i}`,"Energy v time "+s+i])}));
+  [1,2].forEach(n=>{const any=[1,2,3].some(i=>(S[`p.a${n}.${i}`]||"").trim());if((any||S[`p.a${n}.r`])&&!resultOf(`p.a${n}`))out.push(["p.a"+n,"Max power "+(n===1?"left":"right")])});
+  ["L","R"].forEach(s=>[1,2,3].forEach(i=>{const any=(S[`g.${s}${i}.w`]||"").trim()||(S[`g.${s}${i}.rec`]||"").trim();if((any||S[`g.${s}${i}.r`])&&!resultOf(`g.${s}${i}`))out.push([`g.${s}${i}`,"Energy v time "+s+i])}));
   return out;
 }
 function status(){
   const m=missing(); const set=new Set(m.map(x=>x[0]));
   document.querySelectorAll("[data-row]").forEach(r=>{const k=r.dataset.row;r.classList.toggle("missing",showMissing&&set.has(k));
-    const note=!!(S[k+".n"]||"").trim();r.classList.toggle("noted",!S[k+".r"]&&note);r.classList.toggle("has-notes",note)});
+    const note=!!(S[k+".n"]||"").trim();r.classList.toggle("noted",!S[k+".r"]&&note);r.classList.toggle("has-notes",note);r.classList.toggle("want-notes",S[k+".r"]==="note")});
   const fails=Object.keys(S).filter(k=>k.endsWith(".r")&&S[k]==="fail").length;
   const sigs=(S["sig.eng"]?1:0)+(S["sig.cust"]?1:0);
   // per-section counts for the nav
   const st={}, failIn=p=>Object.keys(S).some(k=>k.startsWith(p)&&k.endsWith(".r")&&S[k]==="fail");
   CHECKS.forEach(c=>{st[c.id]=[c.items.filter(([id])=>resultOf(`c.${c.id}.${id}`)).length,c.items.length,failIn("c."+c.id+".")]});
   st.elec=[ELEC.filter(([id])=>resultOf("e."+id)).length,ELEC.length,failIn("e.")];
-  st.power=[[1,2].filter(n=>S[`p.a${n}.r`]).length,2,failIn("p.")];
-  st.energy=[["L1","L2","L3","R1","R2","R3"].filter(k=>S[`g.${k}.r`]).length,6,failIn("g.")];
+  st.power=[[1,2].filter(n=>resultOf(`p.a${n}`)).length,2,failIn("p.")];
+  st.energy=[["L1","L2","L3","R1","R2","R3"].filter(k=>resultOf(`g.${k}`)).length,6,failIn("g.")];
   st.device=[["h.customer","h.model","h.serial"].filter(k=>String(S[k]||"").trim()).length,3,false];
   const used=EQUIP.filter(([id])=>S["q."+id]).length; st.equip=[used?1:0,1,false];
   st.sign=[sigs,2,false];
@@ -627,8 +639,8 @@ function fmtDate(v){if(!v)return "";const [y,m,d]=v.split("-");return `${d}/${m}
 function buildPDF(){
   const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"});
   const W=210,M=14,BR=[0,101,87];
-  const res=(r)=>r==="pass"?"PASS":r==="fail"?"FAIL":r==="pass-notes"?"PASS (see notes)":"";
-  const colourRes=(data,col)=>{if(data.section==="body"&&data.column.index===col){const t=String(data.cell.raw||"");if(t.startsWith("PASS"))data.cell.styles.textColor=[29,122,62];if(t==="FAIL")data.cell.styles.textColor=[180,35,24];data.cell.styles.fontStyle="bold"}};
+  const res=(r)=>r==="pass"?"PASS":r==="fail"?"FAIL":r==="note"?"SEE NOTES":"";
+  const colourRes=(data,col)=>{if(data.section==="body"&&data.column.index===col){const t=String(data.cell.raw||"");if(t.startsWith("PASS"))data.cell.styles.textColor=[29,122,62];if(t==="FAIL")data.cell.styles.textColor=[180,35,24];if(t==="SEE NOTES")data.cell.styles.textColor=[161,92,0];data.cell.styles.fontStyle="bold"}};
   const base={theme:"grid",margin:{left:M,right:M,bottom:22},styles:{fontSize:8.5,cellPadding:1.6,lineColor:[200,208,206],lineWidth:.2,textColor:[20,30,28]},headStyles:{fillColor:BR,textColor:255,fontStyle:"bold"}};
   // Header
   doc.addImage(LOGO,"JPEG",M,10,11,11);doc.addImage(LOGO,"JPEG",W-M-11,10,11,11);
@@ -644,11 +656,13 @@ function buildPDF(){
     head:[[{content:`Electrical safety test        Amps: ${S["e.amps"]||"—"}        Test voltage: ${S["e.volts"]||"—"}`,colSpan:5}],["Test","Measured","Limit","Result","Notes"]],
     columnStyles:{0:{cellWidth:66},1:{cellWidth:22},2:{cellWidth:22},3:{cellWidth:26}},didParseCell:d=>colourRes(d,3),
     body:ELEC.map(([id,name,,pu,op,lim])=>[name.replace("Ω","Ohm"),(S[`e.${id}.v`]?S[`e.${id}.v`]+" "+pu:""),`${op}${lim.toFixed(id==="ins"||id==="load"?2:0)} ${pu}`,res(resultOf("e."+id)),S[`e.${id}.n`]||""])});
-  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Max power range","Max","Setting 1","Setting 2","Setting 3","Result"]],didParseCell:d=>colourRes(d,5),
-    body:[...[[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>[lab,S[mk]?S[mk]+" W":"",S[`p.a${n}.1`]||"",S[`p.a${n}.2`]||"",S[`p.a${n}.3`]||"",res(S[`p.a${n}.r`])])]});
-  const eRows=[];["L","R"].forEach(s=>{eRows.push([{content:"Energy v time — "+(s==="L"?"left":"right"),colSpan:4,styles:{fontStyle:"bold",fillColor:[236,243,241]}}]);
-    [1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);eRows.push([(S[`g.${s}${i}.w`]?S[`g.${s}${i}.w`]+" W":"")+" x 10 s",S[`g.${s}${i}.rec`]?S[`g.${s}${i}.rec`]+" J":"",w==null?"":fmt(w*10)+" J",res(S[`g.${s}${i}.r`])])})});
-  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Watts x 10 seconds","Record","Target","P/F"]],didParseCell:d=>colourRes(d,3),body:eRows});
+  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Max power range","Max","Setting 1","Setting 2","Setting 3","Result","Notes"]],didParseCell:d=>colourRes(d,5),
+    columnStyles:{5:{cellWidth:24}},
+    body:[...[[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>[lab,S[mk]?S[mk]+" W":"",S[`p.a${n}.1`]||"",S[`p.a${n}.2`]||"",S[`p.a${n}.3`]||"",res(resultOf(`p.a${n}`)),S[`p.a${n}.n`]||""])]});
+  const eRows=[];["L","R"].forEach(s=>{eRows.push([{content:"Energy v time — "+(s==="L"?"left":"right"),colSpan:5,styles:{fontStyle:"bold",fillColor:[236,243,241]}}]);
+    [1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);eRows.push([(S[`g.${s}${i}.w`]?S[`g.${s}${i}.w`]+" W":"")+" x 10 s",S[`g.${s}${i}.rec`]?S[`g.${s}${i}.rec`]+" J":"",w==null?"":fmt(w*10)+" J",res(resultOf(`g.${s}${i}`)),S[`g.${s}${i}.n`]||""])})});
+  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Watts x 10 seconds","Record","Target","Result","Notes"]],didParseCell:d=>colourRes(d,3),
+    columnStyles:{3:{cellWidth:24}},body:eRows});
   doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Test equipment","Serial #","Manufacturer","Used"]],
     body:EQUIP.map(([id,n,sn,m])=>[n,sn,m,S["q."+id]?"Yes":""])});
   // Signatures
@@ -694,6 +708,12 @@ document.getElementById("saveBtn").onclick=async()=>{
 const PKEYS=["h.model","h.manufacturer","e.amps","e.volts","p.set.1","p.set.2","p.set.3","p.maxL","p.maxR",
   "g.L1.w","g.L2.w","g.L3.w","g.R1.w","g.R2.w","g.R3.w"];
 const PLOCAL="promed-device-presets-v1";
+// Standard devices, on every phone. Edit here to change them for everyone.
+const BUILTIN=[
+  ["leo-mini-12w-1470","Leonardo Mini 12W - 1470",{"h.manufacturer":"Biolitec","p.maxL":"4","p.maxR":"8","g.L1.w":"1","g.L2.w":"3","g.L3.w":"4","g.R1.w":"4","g.R2.w":"6","g.R3.w":"8"}],
+  ["leo-mini-15w-dual","Leonardo Mini 15W - Dual",{"h.manufacturer":"Biolitec","p.maxL":"11","p.maxR":"4","g.L1.w":"2","g.L2.w":"5","g.L3.w":"11","g.R1.w":"1","g.R2.w":"2","g.R3.w":"4"}]
+].map(([id,name,f])=>({id,name,builtin:true,fields:PKEYS.map(k=>({k,v:k==="h.model"?name:(f[k]??"")}))}));
+const withBuiltin=list=>[...BUILTIN,...list.filter(p=>!BUILTIN.some(b=>b.id===p.id))];
 let presets=[], pdb=null, pDelArmed=false;
 const $=id=>document.getElementById(id);
 function pMsg(h){$("pMsg").innerHTML=h}
@@ -706,7 +726,7 @@ function renderPresets(){
   sel.innerHTML='<option value="">'+(list.length?"— Choose a device —":"No saved devices yet")+'</option>'+
     list.map(p=>`<option value="${esc(p.id)}">${esc(p.name||"Unnamed device")}</option>`).join("");
   sel.value=list.some(p=>p.id===cur)?cur:"";
-  const has=!!sel.value; $("pUpdate").hidden=!has; $("pDelete").hidden=!has;
+  const p=presets.find(x=>x.id===sel.value), mine=!!p&&!p.builtin; $("pUpdate").hidden=!mine; $("pDelete").hidden=!mine;
 }
 function applyPreset(p){
   const f={}; (p.fields||[]).forEach(x=>{if(x&&typeof x.k==="string")f[x.k]=x.v});
@@ -726,7 +746,7 @@ $("pCancel").onclick=()=>{$("pNameRow").hidden=true};
 async function writePreset(id,name){
   const body={name,fields:collect(),updatedAt:new Date().toISOString()};
   if(pdb){await pdb.collection("devices").doc(id).set(body)}
-  else{const list=localRead().filter(p=>p.id!==id);list.push({id,...body});localWrite(list);presets=list;renderPresets()}
+  else{const list=localRead().filter(p=>p.id!==id);list.push({id,...body});localWrite(list);presets=withBuiltin(list);renderPresets()}
 }
 function newId(){return "d"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function dbErr(e){const c=e&&e.code;return c==="quota_exceeded"?"The preset list is full. Delete some old presets first.":
@@ -748,18 +768,18 @@ $("pDelete").onclick=async()=>{
   if(!pDelArmed){pDelArmed=true;$("pDelete").textContent="Tap again to delete";pMsg(`<span class="w">This removes “${esc(p.name)}” from the list. The form itself isn't cleared.</span>`);
     setTimeout(()=>{pDelArmed=false;$("pDelete").textContent="Delete preset"},5000);return}
   pDelArmed=false;$("pDelete").textContent="Delete preset";
-  try{if(pdb){await pdb.collection("devices").doc(p.id).delete()}else{const list=localRead().filter(x=>x.id!==p.id);localWrite(list);presets=list}
+  try{if(pdb){await pdb.collection("devices").doc(p.id).delete()}else{const list=localRead().filter(x=>x.id!==p.id);localWrite(list);presets=withBuiltin(list)}
     S["preset.id"]="";persist();renderPresets();pMsg(`Deleted “${esc(p.name)}”.`)}
   catch(e){pMsg(`<span class="e">Couldn't delete the preset. Try again.</span>`)}
 };
-function useLocalPresets(){pdb=null;presets=localRead();$("presetSrc").textContent="saved on this phone only";renderPresets()}
-presets=[];renderPresets();$("presetSrc").textContent="loading…";
+function useLocalPresets(){pdb=null;presets=withBuiltin(localRead());$("presetSrc").textContent="";renderPresets()}
+presets=withBuiltin([]);renderPresets();$("presetSrc").textContent="loading…";
 (async()=>{
   let db=null; try{db=window.claude&&window.claude.use?await window.claude.use("db"):null}catch(e){db=null}
   if(!db){useLocalPresets();return}
   pdb=db; $("presetSrc").textContent="shared across your devices";
   db.collection("devices").onSnapshot(snap=>{
-    presets=snap.docs.filter(d=>d.exists).map(d=>({id:d.id,...d.data()})); renderPresets();
+    presets=withBuiltin(snap.docs.filter(d=>d.exists).map(d=>({id:d.id,...d.data()}))); renderPresets();
   },()=>useLocalPresets());
 })();
 
