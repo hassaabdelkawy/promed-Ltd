@@ -1,0 +1,772 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Promed Service Report</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Promed Service">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#006557">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: phone = one column with a sticky section chip bar on top and a thumb-reach save bar at the bottom; desktop = sticky section list on the left, form on the right */
+:root{
+  --bg:#eef2f1; --sheet:#ffffff; --ink:#15211e; --muted:#5c6b67; --line:#d5dedb;
+  --brand:#006557; --brand-ink:#ffffff; --brand-soft:#e1efec;
+  --pass:#1d7a3e; --pass-soft:#e2f3e7; --fail:#b42318; --fail-soft:#fbe5e2; --warn:#a15c00; --warn-soft:#fdf0d9;
+  --pad:#fbfcfc;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --sheet:#17221f; --ink:#e4ece9; --muted:#9aaba6; --line:#2c3a36;
+  --brand:#3fb39f; --brand-ink:#04211c; --brand-soft:#1b3430;
+  --pass:#5fcf86; --pass-soft:#163322; --fail:#ff8a7a; --fail-soft:#3a1c18; --warn:#f2b15a; --warn-soft:#3a2a12;
+  --pad:#ffffff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --sheet:#17221f; --ink:#e4ece9; --muted:#9aaba6; --line:#2c3a36;
+  --brand:#3fb39f; --brand-ink:#04211c; --brand-soft:#1b3430;
+  --pass:#5fcf86; --pass-soft:#163322; --fail:#ff8a7a; --fail-soft:#3a1c18; --warn:#f2b15a; --warn-soft:#3a2a12;
+  --pad:#ffffff; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.wrap{--maxw:760px;max-width:var(--maxw);margin:0 auto;padding-inline:16px;padding-block:12px 150px;display:flex;flex-direction:column;gap:14px}
+button,label,select,input{-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation}
+section.sheet{scroll-margin-top:70px}
+/* Section navigation */
+nav.jump{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);margin-inline:-16px;padding:8px 16px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
+nav.jump::-webkit-scrollbar{display:none}
+nav.jump button{flex:none;font:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:999px;padding:7px 12px;min-height:38px;cursor:pointer}
+nav.jump button i{font-style:normal;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted);background:var(--bg);border-radius:999px;padding:1px 7px}
+nav.jump button.done i{background:var(--pass-soft);color:var(--pass)}
+nav.jump button.bad i{background:var(--fail-soft);color:var(--fail)}
+nav.jump button.on{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+nav.jump .navtitle{display:none}
+@media (min-width:1000px){
+  .wrap{--maxw:1100px;display:grid;grid-template-columns:230px minmax(0,1fr);column-gap:24px;row-gap:14px;align-items:start}
+  .wrap>*{grid-column:2}
+  .wrap>header.top{grid-column:1/-1}
+  nav.jump{grid-column:1;grid-row:2/span 11;flex-direction:column;overflow:visible;margin:0;padding:0;border:0;background:none;top:calc(16px + env(safe-area-inset-top,0px))}
+  nav.jump .navtitle{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 4px 4px}
+  nav.jump button{border-radius:8px;justify-content:space-between;width:100%;padding:9px 12px}
+  section.sheet{scroll-margin-top:16px}
+  .bar .in,.bar .msg{max-width:1100px}
+}
+header.top{display:flex;align-items:center;gap:12px;padding-block:4px}
+header.top img{width:36px;height:36px;border-radius:6px}
+header.top h1{font-size:20px;margin:0;text-wrap:balance;line-height:1.2}
+header.top p{margin:2px 0 0;color:var(--muted);font-size:13px}
+section.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+section.sheet>h2{margin:0;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--brand);padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+section.sheet>h2 small{text-transform:none;letter-spacing:0;color:var(--muted);font-weight:500;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:14px}
+.grid .full{grid-column:1/-1}
+@media (max-width:520px){.grid{grid-template-columns:minmax(0,1fr)}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+input[type=text],input[type=date],input[type=number],textarea,input[inputmode],select{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0;min-height:44px}
+textarea{resize:vertical;min-height:64px}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.inline{display:flex;gap:6px;align-items:center}
+.chip{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--sheet);color:var(--brand);border-radius:999px;padding:6px 12px;min-height:36px;white-space:nowrap;cursor:pointer}
+.row{padding:12px 14px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+.addnote{grid-column:1/-1;justify-self:start;font:inherit;font-size:13px;font-weight:600;color:var(--brand);background:none;border:0;padding:4px 0;min-height:32px;cursor:pointer}
+.row .notes{display:none}
+.row.show-notes .notes,.row.has-notes .notes{display:block}
+.row.show-notes .addnote,.row.has-notes .addnote{display:none}
+@media (min-width:760px){
+  .row.chk{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+  .row.chk .name{grid-column:1;grid-row:1}
+  .row.chk .notes{display:block;grid-column:2;grid-row:1}
+  .row.chk .seg{grid-column:3;grid-row:1}
+  .row.chk .addnote{display:none}
+  .row.el{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+  .row.el .name{grid-column:1;grid-row:1}
+  .row.el .meas{grid-column:2;grid-row:1}
+  .row.el .seg{grid-column:3;grid-row:1}
+}
+.cells{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cells.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cells label,.cells .tgtc{display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:600;color:var(--muted);min-width:0}
+.cells input{font-family:var(--f-mono);font-size:16px;padding:8px}
+.cells .tgtc b{font-family:var(--f-mono);font-size:15px;color:var(--ink);background:var(--brand-soft);border-radius:8px;padding:0 8px;min-height:44px;display:flex;align-items:center}
+.allpass{margin-left:auto}
+.row.below .name{grid-column:1/-1;grid-row:1}
+.row.below .cells{grid-row:2}
+.row.below .seg{grid-column:1/-1;grid-row:3;display:flex}
+.row.below .seg button{flex:1;min-height:48px}
+section.sheet>h2 .allpass{text-transform:none;letter-spacing:0;font-size:12px}
+.prog{height:4px;background:var(--line);border-radius:2px;overflow:hidden;max-width:var(--maxw,760px);margin:0 auto 8px}
+.prog i{display:block;height:100%;width:0;background:var(--brand);transition:width .2s}
+.row:last-child{border-bottom:0}
+.row .name{font-weight:600;min-width:0}
+.row .name small{display:block;color:var(--muted);font-weight:500;font-size:12px;font-family:var(--f-mono)}
+.row .notes{grid-column:1/-1}
+.row .notes input{font-size:15px;padding:7px 10px}
+.row.missing{box-shadow:inset 4px 0 0 var(--warn);background:var(--warn-soft)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-weight:700;font-size:14px;border:0;background:var(--sheet);color:var(--muted);padding:0 16px;min-height:44px;min-width:66px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[data-v=pass][aria-pressed=true]{background:var(--pass);color:#fff}
+.seg button[data-v=fail][aria-pressed=true]{background:var(--fail);color:#fff}
+.seg .auto{font-weight:500;font-size:10px;display:block;opacity:.85;line-height:1}
+.meas{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.meas .val{position:relative;flex:1 1 140px;min-width:0}
+.meas .val input{font-family:var(--f-mono);padding-right:48px}
+.meas .val input[readonly]{background:var(--brand-soft);border-style:dashed}
+.row .name small{font-family:var(--f-body);font-weight:500}
+.meas .val span{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:var(--f-mono);font-size:13px;pointer-events:none}
+.limit{font-family:var(--f-mono);font-size:12px;color:var(--muted);background:var(--bg);border-radius:6px;padding:3px 7px;white-space:nowrap}
+.tbl{overflow-x:auto;padding:4px 14px 14px}
+table.mini{border-collapse:collapse;width:100%;min-width:420px;font-variant-numeric:tabular-nums}
+table.mini th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;padding:8px 4px;font-weight:600}
+table.mini td{padding:5px 4px;vertical-align:middle;border-top:1px solid var(--line)}
+table.mini input{font-family:var(--f-mono);font-size:15px;padding:7px 8px}
+td.tgt{font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.sub{padding:12px 14px 0;font-weight:700;font-size:14px}
+.equip{padding:6px 14px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.equip{grid-template-columns:minmax(0,1fr)}}
+.equip label{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px;cursor:pointer;min-width:0}
+.equip label:has(input:checked){border-color:var(--brand);background:var(--brand-soft)}
+.equip input{width:20px;height:20px;accent-color:var(--brand);flex:none}
+.equip b{display:block;font-size:14px}
+.equip small{color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.sigs{padding:14px;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+@media (min-width:720px){.sigs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sig h3{margin:0 0 8px;font-size:14px}
+.pad{position:relative;display:block;width:100%;font:inherit;background:var(--pad);border:1.5px dashed var(--line);border-radius:10px;height:150px;cursor:pointer;padding:0}
+.pad img{position:absolute;left:12px;top:10px;width:calc(100% - 24px);height:calc(100% - 20px);object-fit:contain}
+.pad .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;color:#006557;font-weight:700;font-size:15px}
+.pad.has .hint{display:none}
+.row.noted .name::after{content:"Counts as pass (see notes)";display:block;font-size:12px;font-weight:600;color:var(--pass)}
+.sheetSign{position:fixed;inset:0;z-index:50;background:var(--sheet);display:flex;flex-direction:column;gap:10px;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(12px + env(safe-area-inset-bottom,0px));touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none}
+.sgHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sgHead b{font-size:17px}
+.sgHead span{color:var(--muted);font-size:12px}
+.sgArea{flex:1;position:relative;background:#fff;border:1.5px solid var(--line);border-radius:12px;touch-action:none;min-height:0}
+.sgArea canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;border-radius:12px}
+.sgLine{position:absolute;left:24px;right:24px;bottom:22%;border-bottom:1px solid #b9c4c1;color:#8a9894;font-size:12px;padding-bottom:4px;pointer-events:none}
+.sgBtns{display:flex;gap:10px}
+.sgBtns .btn{flex:1;min-height:50px}
+.sigbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.sigbar span{color:var(--muted);font-size:12px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--sheet);border-top:1px solid var(--line);padding:0 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.bar .prog{margin:0 -16px 8px;max-width:none;border-radius:0}
+.bar .in{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.status{flex:1 1 180px;min-width:0;font-size:13px}
+.status b{font-variant-numeric:tabular-nums}
+.status .ok{color:var(--pass)} .status .no{color:var(--warn)}
+.btn{font:inherit;font-weight:700;border-radius:10px;padding:12px 18px;min-height:48px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.btn.danger{color:var(--fail)}
+.msg{max-width:760px;margin:8px auto 0;font-size:13px}
+.msg:empty{display:none}
+.msg .w{color:var(--warn)} .msg .e{color:var(--fail)} .msg .g{color:var(--pass)}
+select{appearance:auto}
+.pbtns{display:flex;gap:8px;flex-wrap:wrap}
+.pname{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.pname label{flex:1 1 200px}
+.pmsg{font-size:13px;color:var(--muted)}
+.pmsg:empty{display:none}
+.pmsg .g{color:var(--pass)} .pmsg .e{color:var(--fail)} .pmsg .w{color:var(--warn)}
+.chip.danger{color:var(--fail)}
+footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
+@media (prefers-reduced-motion:no-preference){.seg button{transition:background .12s}}
+@media (min-width:1000px){.bar .in,.bar .msg{max-width:1100px}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <img src="data:image/jpeg;base64,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" alt="Promed logo">
+    <div>
+      <h1>Service &amp; Test Report</h1>
+      <p>Promed Ltd · Leonardo Mini · QF 50-4</p>
+    </div>
+  </header>
+
+  <nav class="jump" id="jump" aria-label="Sections"></nav>
+
+  <section class="sheet" id="sec-device">
+    <h2>Device preset <small id="presetSrc"></small></h2>
+    <div class="grid">
+      <label class="f full">Choose a saved device
+        <select id="presetSel"><option value="">— Choose a device —</option></select>
+      </label>
+      <div class="full pbtns">
+        <button type="button" class="chip" id="pSave">Save as new preset</button>
+        <button type="button" class="chip" id="pUpdate" hidden>Update this preset</button>
+        <button type="button" class="chip danger" id="pDelete" hidden>Delete preset</button>
+      </div>
+      <div class="full pname" id="pNameRow" hidden>
+        <label class="f">Preset name<input type="text" id="pName" placeholder="e.g. Leonardo Mini 15W - Dual"></label>
+        <button type="button" class="btn primary" id="pConfirm">Save preset</button>
+        <button type="button" class="btn" id="pCancel">Cancel</button>
+      </div>
+      <div class="full pmsg" id="pMsg"></div>
+    </div>
+  </section>
+
+  <section class="sheet">
+    <h2>Customer &amp; device</h2>
+    <div class="grid">
+      <label class="f full">Customer<input type="text" id="h_customer" data-k="h.customer" autocomplete="organization"></label>
+      <label class="f full">Customer address<textarea id="h_address" data-k="h.address" rows="2"></textarea></label>
+      <label class="f">Model<input type="text" id="h_model" data-k="h.model"></label>
+      <label class="f">Manufacturer<input type="text" id="h_manufacturer" data-k="h.manufacturer"></label>
+      <label class="f">Serial number<input type="text" id="h_serial" data-k="h.serial" autocapitalize="characters"></label>
+      <label class="f">Software version<input type="text" id="h_software" data-k="h.software"></label>
+      <label class="f">Date<input type="date" id="h_date" data-k="h.date"></label>
+      <label class="f">Next inspection date
+        <span class="inline"><input type="date" id="h_next" data-k="h.next"><button type="button" class="chip" id="plus1y">+1 year</button></span>
+      </label>
+    </div>
+  </section>
+
+  <div id="checkSections"></div>
+
+  <section class="sheet" id="sec-elec">
+    <h2>Electrical safety test <small>Pass/Fail fills in from the limit</small></h2>
+    <div class="grid">
+      <label class="f">Amps<input type="text" inputmode="decimal" id="e_amps" data-k="e.amps"></label>
+      <label class="f">Test voltage<input type="text" inputmode="decimal" id="e_volts" data-k="e.volts"></label>
+    </div>
+    <div id="elecRows"></div>
+  </section>
+
+  <section class="sheet" id="sec-power">
+    <h2>Max power range</h2>
+    <div id="powerRows"></div>
+  </section>
+
+  <section class="sheet" id="sec-energy">
+    <h2>Energy v time <small>Target = watts × 10 s</small></h2>
+    <div id="energy"></div>
+  </section>
+
+  <section class="sheet" id="sec-equip">
+    <h2>Test equipment used</h2>
+    <div class="equip" id="equip"></div>
+  </section>
+
+  <section class="sheet" id="sec-sign">
+    <h2>Sign-off</h2>
+    <div class="sigs">
+      <div class="sig">
+        <h3>Engineer</h3>
+        <label class="f">Engineer name<select id="s_engname" data-k="s.engName"><option value="">— Choose engineer —</option><option>Andrew Koronowski</option><option>Conor Whittaker</option><option>Hassan Kawy</option><option>Stephen Allen</option></select></label>
+        <div style="height:10px"></div>
+        <button type="button" class="pad" id="pad_eng" data-sign="eng"><img alt="Engineer signature" hidden><span class="hint">✍ Tap to sign</span></button>
+        <div class="sigbar"><span id="t_eng"></span><button type="button" class="chip" data-clear="eng">Clear</button></div>
+        <div class="pbtns" style="margin-top:8px">
+          <button type="button" class="chip" id="sigSave" hidden>Save as my signature</button>
+          <button type="button" class="chip danger" id="sigForget" hidden>Remove saved signature</button>
+        </div>
+        <div class="pmsg" id="sigMsg" style="margin-top:6px"></div>
+      </div>
+      <div class="sig">
+        <h3>Customer</h3>
+        <label class="f">Customer name (print)<input type="text" id="s_custname" data-k="s.custName"></label>
+        <div style="height:10px"></div>
+        <button type="button" class="pad" id="pad_cust" data-sign="cust"><img alt="Customer signature" hidden><span class="hint">✍ Tap to sign</span></button>
+        <div class="sigbar"><span id="t_cust"></span><button type="button" class="chip" data-clear="cust">Clear</button></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="form">Promed Ltd, Unit 15, West Newlands Industrial Estate, Somersham, PE28 3EB · Tel 01487 842842</footer>
+  <div style="display:flex;justify-content:center"><button type="button" class="btn danger" id="newBtn">Start a new report</button></div>
+  <div class="msg" id="newMsg" style="text-align:center"></div>
+</div>
+
+<div class="sheetSign" id="signOv" hidden role="dialog" aria-modal="true" aria-labelledby="signTitle">
+  <div class="sgHead"><b id="signTitle">Signature</b><span>Turn the phone sideways for more room</span></div>
+  <div class="sgArea" id="signArea"><canvas id="signCv"></canvas><div class="sgLine" id="signLine">Sign above the line</div></div>
+  <div class="sgBtns">
+    <button type="button" class="btn" id="sgCancel">Cancel</button>
+    <button type="button" class="btn" id="sgClear">Clear</button>
+    <button type="button" class="btn primary" id="sgDone">Done</button>
+  </div>
+</div>
+
+<div class="bar">
+  <div class="prog" aria-hidden="true"><i id="progFill"></i></div>
+  <div class="in">
+    <div class="status" id="status"></div>
+    <button type="button" class="btn primary" id="saveBtn">Save PDF</button>
+  </div>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+(function(){
+const LOGO="data:image/jpeg;base64,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";
+const KEY="promed-leo-mini-draft-v1", ENGKEY="promed-engineer-name";
+
+const CHECKS=[
+  {id:"vis",title:"Visual inspection",items:[["labels","Labelling / warning labels"],["signs","Information signs / warning signs"],["manual","User manual"],["complete","Equipment complete"],["conn","Connections"],["surfaces","External surfaces of device"]]},
+  {id:"fun",title:"Function capability check",items:[["footswitch","Footswitch"],["beam","Beam guidance system"],["interlocks","Interlocks"],["display","Display & operations"]]},
+  {id:"mon",title:"Monitoring, safety, display & reporting",items:[["eyewear","Laser safety eyewear"],["lights","Indicator lights"],["keycode","Key code"],["estop","Emergency stop button"]]}
+];
+const ELEC=[
+  ["load","Mains loading at max laser power output","kVA","kVA","<",3.12],
+  ["ins","Mains insulation (500 V)","MΩ","MOhm",">",2.00],
+  ["elN","Earth leakage current (N)","µA","uA","<",500],
+  ["elR","Earth leakage current (R)","µA","uA","<",500],
+  ["elsfN","Earth leakage current, S.F. condition (N)","µA","uA","<",1000],
+  ["elsfR","Earth leakage current, S.F. condition (R)","µA","uA","<",1000],
+  ["enN","Enclosure leakage (N)","µA","uA","<",100],
+  ["enR","Enclosure leakage (R)","µA","uA","<",100],
+  ["ennoN","Enclosure leakage, S.F. neutral open (N)","µA","uA","<",500],
+  ["ennoR","Enclosure leakage, S.F. neutral open (R)","µA","uA","<",500],
+  ["eneoN","Enclosure leakage, S.F. earth open (N)","µA","uA","<",500],
+  ["eneoR","Enclosure leakage, S.F. earth open (R)","µA","uA","<",500]
+];
+const EQUIP=[["st1","Safe Test 60","03H-0380","Seaward"],["vega1","Vega Display","3134757","Ophir"],["cw1","CW Head","538 316","Ophir"],["st2","Safe Test 60","19R-4925","Seaward"],["vega2","Vega Display","3134752","Ophir"],["cw2","CW Head","3139675","Ophir"]];
+const DEFAULTS={"h.model":"Leonardo Mini"};
+
+let S={};
+function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)||{};}catch(e){S={}}
+  defaults();}
+function defaults(){
+  for(const k in DEFAULTS) if(S[k]==null) S[k]=DEFAULTS[k];
+  if(!S["h.date"]) S["h.date"]=today();
+  if(!S["s.engName"]){try{S["s.engName"]=localStorage.getItem(ENGKEY)||""}catch(e){}}
+}
+let saveT;
+function persist(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));if(S["s.engName"])localStorage.setItem(ENGKEY,S["s.engName"])}catch(e){}},250)}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function seg(k){return `<div class="seg" role="group"><button type="button" data-k="${k}" data-v="pass" aria-pressed="false">Pass</button><button type="button" data-k="${k}" data-v="fail" aria-pressed="false">Fail</button></div>`}
+
+// Build pass/fail check sections
+const addNote=`<button type="button" class="addnote" data-addnote>+ Add note</button>`;
+document.getElementById("checkSections").innerHTML=CHECKS.map(sec=>`
+  <section class="sheet" id="sec-${sec.id}" style="margin-bottom:14px"><h2>${esc(sec.title)}<button type="button" class="chip allpass" data-allpass="${sec.id}">All pass</button></h2>
+  ${sec.items.map(([id,name])=>`<div class="row chk" data-row="c.${sec.id}.${id}">
+    <div class="name">${esc(name)}</div>${seg(`c.${sec.id}.${id}.r`)}${addNote}
+    <div class="notes"><input type="text" id="n_${sec.id}_${id}" data-k="c.${sec.id}.${id}.n" placeholder="Notes" enterkeyhint="next"></div></div>`).join("")}
+  </section>`).join("");
+document.getElementById("checkSections").lastElementChild.style.marginBottom="0";
+
+document.getElementById("elecRows").innerHTML=ELEC.map(([id,name,unit,,op,lim])=>`
+  <div class="row el" data-row="e.${id}">
+    <div class="name">${esc(name)}${id==="load"?"<small>= amps × test voltage ÷ 1000</small>":""}</div>${seg(`e.${id}.r`)}
+    <div class="meas"><div class="val"><input type="text" inputmode="decimal" id="m_${id}" data-k="e.${id}.v" ${id==="load"?'readonly tabindex="-1" placeholder="Fills in from amps × volts"':'placeholder="Measured"'}><span>${unit}</span></div>
+    <span class="limit">limit ${op}${lim.toFixed(id==="ins"||id==="load"?2:0)} ${unit}</span></div>
+    ${addNote}<div class="notes"><input type="text" id="en_${id}" data-k="e.${id}.n" placeholder="Notes" enterkeyhint="next"></div>
+  </div>`).join("");
+
+const cell=(lab,k,ph)=>`<label><span>${lab}</span><input type="text" inputmode="decimal" enterkeyhint="next" id="${k.replace(/\./g,'_')}" data-k="${k}"${ph?` placeholder="${ph}"`:""}></label>`;
+document.getElementById("powerRows").innerHTML=
+  [[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>`<div class="row below" data-row="p.a${n}"><div class="name">${lab}</div>${seg(`p.a${n}.r`)}
+    <div class="cells">${cell("Max (W)",mk)}${cell("Setting 1",`p.a${n}.1`)}${cell("Setting 2",`p.a${n}.2`)}${cell("Setting 3",`p.a${n}.3`)}</div></div>`).join("");
+
+document.getElementById("energy").innerHTML=[["L","Left"],["R","Right"]].map(([s,lab])=>`
+  <div class="sub">${lab}</div>
+  ${[1,2,3].map(i=>`<div class="row below" data-row="g.${s}${i}"><div class="name">Test ${i}</div>${seg(`g.${s}${i}.r`)}
+    <div class="cells c3">${cell("Watts × 10 s",`g.${s}${i}.w`,"W")}${cell("Record (J)",`g.${s}${i}.rec`,"J")}
+    <div class="tgtc"><span>Target</span><b id="tgt_${s}${i}">– J</b></div></div></div>`).join("")}`).join("");
+
+document.getElementById("equip").innerHTML=EQUIP.map(([id,n,sn,m])=>`<label><input type="checkbox" id="q_${id}" data-k="q.${id}"><span><b>${esc(n)}</b><small>${esc(sn)} · ${esc(m)}</small></span></label>`).join("");
+
+// Bind inputs
+function sig3(x){if(!isFinite(x))return "";if(x===0)return "0";const t=x.toPrecision(3);return t.includes("e")?String(Number(t)):t}
+function calcLoad(){const a=num(S["e.amps"]),v=num(S["e.volts"]);
+  const nv=a!=null&&v!=null?sig3(a*v/1000):"";
+  if(S["e.load.v"]!==nv){S["e.load.v"]=nv;S["e.load.auto"]=S["e.load.auto"]||!S["e.load.r"];}
+  autoElec("load");}
+function fill(){
+  calcLoad();
+  document.querySelectorAll("[data-k]").forEach(el=>{
+    const k=el.dataset.k;
+    if(el.tagName==="BUTTON"){el.setAttribute("aria-pressed",String(S[k]===el.dataset.v));
+      const autoK=k.replace(/\.r$/,".auto"); el.innerHTML=(el.dataset.v==="pass"?"Pass":"Fail")+(S[k]===el.dataset.v&&S[autoK]?'<span class="auto">auto</span>':"");}
+    else if(el.type==="checkbox") el.checked=!!S[k];
+    else el.value=S[k]??"";
+  });
+  targets(); status();
+}
+function num(v){if(v==null||String(v).trim()==="")return null;const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n}
+function autoElec(id){
+  const row=ELEC.find(r=>r[0]===id); const v=num(S[`e.${id}.v`]);
+  const rk=`e.${id}.r`, ak=`e.${id}.auto`;
+  if(v==null){ if(S[ak]){S[rk]="";S[ak]=false} return }
+  if(S[rk] && !S[ak]) return; // manual override stays
+  const ok=row[4]===">"?v>row[5]:v<row[5];
+  S[rk]=ok?"pass":"fail"; S[ak]=true;
+}
+function targets(){["L","R"].forEach(s=>[1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);document.getElementById(`tgt_${s}${i}`).textContent=w==null?"– J":fmt(w*10)+" J"}))}
+function fmt(n){return Math.round(n*100)/100+""}
+
+document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;
+  S[k]=e.target.type==="checkbox"?e.target.checked:e.target.value;
+  const m=k.match(/^e\.(\w+)\.v$/); if(m){autoElec(m[1]); fill();} else if(k==="e.amps"||k==="e.volts"){fill();} else {if(k.startsWith("g."))targets(); status();}
+  persist();});
+document.addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;
+  const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();});
+document.getElementById("plus1y").onclick=()=>{const d=S["h.date"]?new Date(S["h.date"]+"T12:00"):new Date();d.setFullYear(d.getFullYear()+1);
+  S["h.next"]=d.toISOString().slice(0,10);fill();persist();};
+
+// Section navigation
+const NAV=[["sec-device","Device","device"],...CHECKS.map(c=>["sec-"+c.id,{vis:"Visual",fun:"Function",mon:"Safety & display"}[c.id],c.id]),
+  ["sec-elec","Electrical","elec"],["sec-power","Max power","power"],["sec-energy","Energy","energy"],["sec-equip","Equipment","equip"],["sec-sign","Sign-off","sign"]];
+document.getElementById("jump").innerHTML='<div class="navtitle">Sections</div>'+NAV.map(([id,lab,key])=>`<button type="button" data-jump="${id}" data-key="${key}"><span>${esc(lab)}</span><i></i></button>`).join("");
+document.getElementById("jump").addEventListener("click",e=>{const b=e.target.closest("[data-jump]");if(!b)return;
+  const sec=document.getElementById(b.dataset.jump);if(sec)sec.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})});
+if("IntersectionObserver" in window){const vis=new Map();
+  const io=new IntersectionObserver(es=>{es.forEach(en=>vis.set(en.target.id,en.isIntersecting));
+    const first=NAV.find(([id])=>vis.get(id));if(!first)return;
+    document.querySelectorAll("nav.jump button").forEach(b=>{const on=b.dataset.jump===first[0];b.classList.toggle("on",on);
+      if(on&&window.innerWidth<1000){const nav=document.getElementById("jump");const l=b.offsetLeft-16;if(l<nav.scrollLeft||b.offsetLeft+b.offsetWidth>nav.scrollLeft+nav.clientWidth)nav.scrollTo({left:l,behavior:"smooth"})}})},
+    {rootMargin:"-80px 0px -55% 0px"});
+  NAV.forEach(([id])=>{const el=document.getElementById(id);if(el)io.observe(el)});}
+
+// "All pass" for a check section (never overwrites a Fail)
+document.addEventListener("click",e=>{const b=e.target.closest("[data-allpass]");if(!b)return;
+  const sec=CHECKS.find(c=>c.id===b.dataset.allpass);
+  sec.items.forEach(([id])=>{const k=`c.${sec.id}.${id}.r`;if(!S[k])S[k]="pass"});fill();persist();});
+// "+ Add note" reveals the notes box
+document.addEventListener("click",e=>{const b=e.target.closest("[data-addnote]");if(!b)return;
+  const row=b.closest(".row");row.classList.add("show-notes");const inp=row.querySelector(".notes input");if(inp)inp.focus();});
+document.addEventListener("focusout",e=>{const row=e.target.closest&&e.target.closest(".row.show-notes");
+  if(row&&e.target.matches(".notes input")&&!e.target.value.trim())setTimeout(()=>row.classList.remove("show-notes"),150);});
+// Enter on the phone keyboard moves to the next box
+document.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.target.tagName!=="INPUT"||e.target.type==="checkbox")return;
+  e.preventDefault();const all=[...document.querySelectorAll(".wrap input:not([type=checkbox]):not([type=date]), .wrap textarea")].filter(el=>el.offsetParent);
+  const i=all.indexOf(e.target);if(i>-1&&all[i+1])all[i+1].focus();else e.target.blur();});
+
+// Completeness
+function resultOf(k){const r=S[k+".r"];if(r)return r;if((S[k+".n"]||"").trim())return "pass-notes";return ""}
+function missing(){
+  const out=[];
+  CHECKS.forEach(sec=>sec.items.forEach(([id,name])=>{if(!resultOf(`c.${sec.id}.${id}`))out.push(["c."+sec.id+"."+id,name])}));
+  ELEC.forEach(([id,name])=>{if(!resultOf("e."+id))out.push(["e."+id,name])});
+  [1,2].forEach(n=>{const any=[1,2,3].some(i=>(S[`p.a${n}.${i}`]||"").trim());if(any&&!S[`p.a${n}.r`])out.push(["p.a"+n,"Max power "+(n===1?"left":"right")])});
+  ["L","R"].forEach(s=>[1,2,3].forEach(i=>{const any=(S[`g.${s}${i}.w`]||"").trim()||(S[`g.${s}${i}.rec`]||"").trim();if(any&&!S[`g.${s}${i}.r`])out.push([`g.${s}${i}`,"Energy v time "+s+i])}));
+  return out;
+}
+function status(){
+  const m=missing(); const set=new Set(m.map(x=>x[0]));
+  document.querySelectorAll("[data-row]").forEach(r=>{const k=r.dataset.row;r.classList.toggle("missing",showMissing&&set.has(k));
+    const note=!!(S[k+".n"]||"").trim();r.classList.toggle("noted",!S[k+".r"]&&note);r.classList.toggle("has-notes",note)});
+  const fails=Object.keys(S).filter(k=>k.endsWith(".r")&&S[k]==="fail").length;
+  const sigs=(S["sig.eng"]?1:0)+(S["sig.cust"]?1:0);
+  // per-section counts for the nav
+  const st={}, failIn=p=>Object.keys(S).some(k=>k.startsWith(p)&&k.endsWith(".r")&&S[k]==="fail");
+  CHECKS.forEach(c=>{st[c.id]=[c.items.filter(([id])=>resultOf(`c.${c.id}.${id}`)).length,c.items.length,failIn("c."+c.id+".")]});
+  st.elec=[ELEC.filter(([id])=>resultOf("e."+id)).length,ELEC.length,failIn("e.")];
+  st.power=[[1,2].filter(n=>S[`p.a${n}.r`]).length,2,failIn("p.")];
+  st.energy=[["L1","L2","L3","R1","R2","R3"].filter(k=>S[`g.${k}.r`]).length,6,failIn("g.")];
+  st.device=[["h.customer","h.model","h.serial"].filter(k=>String(S[k]||"").trim()).length,3,false];
+  const used=EQUIP.filter(([id])=>S["q."+id]).length; st.equip=[used?1:0,1,false];
+  st.sign=[sigs,2,false];
+  document.querySelectorAll("nav.jump button").forEach(b=>{const v=st[b.dataset.key];if(!v)return;const [d,t,f]=v;
+    b.querySelector("i").textContent=b.dataset.key==="equip"?(used?used+" used":"–"):(d===t?"✓":d+"/"+t);
+    b.classList.toggle("done",d===t&&!f);b.classList.toggle("bad",f)});
+  const keys=["vis","fun","mon","elec","power","energy","sign"].filter(k=>st[k]);
+  const D=keys.reduce((a,k)=>a+st[k][0],0),T=keys.reduce((a,k)=>a+st[k][1],0);
+  document.getElementById("progFill").style.width=(T?Math.round(D/T*100):0)+"%";
+  document.getElementById("status").innerHTML=
+    `<b>${D}/${T}</b> done`+(fails?` · <b style="color:var(--fail)">${fails} fail${fails>1?"s":""}</b>`:"")+
+    `<br><span class="${m.length?"no":"ok"}">${m.length?m.length+" without a result":"All results in"}</span> · signed <b>${sigs}/2</b>`;
+}
+let showMissing=false;
+
+// Signatures: tap a box to open a full-screen signing sheet (the page can't scroll underneath)
+function renderSig(who){
+  const box=document.getElementById("pad_"+who), img=box.querySelector("img"), src=S["sig."+who];
+  img.hidden=!src; if(src)img.src=src; else img.removeAttribute("src");
+  box.classList.toggle("has",!!src);
+  box.setAttribute("aria-label",src?"Signed. Tap to sign again":"Tap to sign");
+  document.getElementById("t_"+who).textContent=S["sigT."+who]?"Signed "+S["sigT."+who]:"Not signed yet";
+}
+const ov=document.getElementById("signOv"), scv=document.getElementById("signCv"), sctx=scv.getContext("2d"), sArea=document.getElementById("signArea");
+let sWho=null, strokes=[], cur=null;
+function sSize(){const r=sArea.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  scv.width=Math.max(1,r.width*dpr);scv.height=Math.max(1,r.height*dpr);sctx.setTransform(dpr,0,0,dpr,0,0);sRedraw()}
+function sStyle(c){c.lineCap="round";c.lineJoin="round";c.strokeStyle="#0b1f3a";c.fillStyle="#0b1f3a";c.lineWidth=2.8}
+function sPath(c,st,dx,dy){if(st.length===1){c.beginPath();c.arc(st[0].x-dx,st[0].y-dy,1.4,0,7);c.fill();return}
+  c.beginPath();c.moveTo(st[0].x-dx,st[0].y-dy);for(let i=1;i<st.length;i++)c.lineTo(st[i].x-dx,st[i].y-dy);c.stroke()}
+function sRedraw(){const r=sArea.getBoundingClientRect();sctx.clearRect(0,0,r.width,r.height);sStyle(sctx);strokes.forEach(st=>sPath(sctx,st,0,0))}
+function sPt(e){const r=scv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+scv.addEventListener("pointerdown",e=>{e.preventDefault();try{scv.setPointerCapture(e.pointerId)}catch(_){}
+  cur=[sPt(e)];strokes.push(cur);sStyle(sctx);sPath(sctx,cur,0,0)});
+scv.addEventListener("pointermove",e=>{if(!cur)return;e.preventDefault();
+  const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+  evs.forEach(ev=>{const p=sPt(ev),l=cur[cur.length-1];cur.push(p);sctx.beginPath();sctx.moveTo(l.x,l.y);sctx.lineTo(p.x,p.y);sctx.stroke()})});
+const sEnd=()=>{cur=null};
+scv.addEventListener("pointerup",sEnd);scv.addEventListener("pointercancel",sEnd);
+ov.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+ov.addEventListener("gesturestart",e=>e.preventDefault());
+let prevOverflow=["",""];
+function openSign(who){
+  sWho=who;strokes=[];cur=null;
+  document.getElementById("signTitle").textContent=(who==="eng"?"Engineer":"Customer")+" signature";
+  const nm=S[who==="eng"?"s.engName":"s.custName"];
+  document.getElementById("signLine").textContent=nm&&nm.trim()?nm.trim():"Sign above the line";
+  prevOverflow=[document.documentElement.style.overflow,document.body.style.overflow];
+  document.documentElement.style.overflow="hidden";document.body.style.overflow="hidden";
+  ov.hidden=false;requestAnimationFrame(sSize);
+}
+function closeSign(){ov.hidden=true;sWho=null;strokes=[];
+  document.documentElement.style.overflow=prevOverflow[0];document.body.style.overflow=prevOverflow[1]}
+window.addEventListener("resize",()=>{if(!ov.hidden)sSize()});
+document.querySelectorAll("[data-sign]").forEach(b=>b.onclick=()=>openSign(b.dataset.sign));
+document.getElementById("sgCancel").onclick=closeSign;
+document.getElementById("sgClear").onclick=()=>{strokes=[];sRedraw()};
+document.getElementById("sgDone").onclick=()=>{
+  const who=sWho; if(!who)return;
+  const pts=strokes.flat();
+  if(!pts.length){closeSign();return}
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;pts.forEach(p=>{x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x);y1=Math.max(y1,p.y)});
+  const padd=10;x0-=padd;y0-=padd;x1+=padd;y1+=padd;
+  const w=Math.max(40,x1-x0),h=Math.max(20,y1-y0),k=2;
+  const out=document.createElement("canvas");out.width=Math.round(w*k);out.height=Math.round(h*k);
+  const c=out.getContext("2d");c.setTransform(k,0,0,k,0,0);sStyle(c);strokes.forEach(st=>sPath(c,st,x0,y0));
+  S["sig."+who]=out.toDataURL("image/png");S["sigWH."+who]=[w,h];
+  const d=new Date();S["sigT."+who]=d.toLocaleDateString("en-GB")+" "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  if(who==="eng")S["sig.eng.auto"]="";
+  closeSign();renderSig(who);persist();status();if(who==="eng")sigButtons();
+};
+renderSig("eng");renderSig("cust");
+document.querySelectorAll("[data-clear]").forEach(b=>b.onclick=()=>{const w=b.dataset.clear;delete S["sig."+w];delete S["sigT."+w];delete S["sigWH."+w];
+  if(w==="eng")S["sig.eng.auto"]="";renderSig(w);persist();status();if(w==="eng")sigButtons()});
+
+// Saved engineer signatures: kept private to this person's account (or this phone if the account store isn't available)
+let sdb=null, suid=null; const sigCache={};
+const slug=n=>"sig-"+String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const SIGLOCAL=n=>"promed-eng-sig-"+slug(n);
+async function getSaved(name){
+  if(name in sigCache)return sigCache[name];
+  let v=null;
+  if(sdb&&suid){try{const d=await sdb.collection("data/users/"+suid).doc(slug(name)).get();v=d.exists?d.data():null}catch(e){v=null}}
+  if(!v){try{const r=localStorage.getItem(SIGLOCAL(name));v=r?JSON.parse(r):null}catch(e){}}
+  sigCache[name]=v;return v;
+}
+async function putSaved(name,v){
+  try{localStorage.setItem(SIGLOCAL(name),JSON.stringify(v))}catch(e){}
+  if(sdb&&suid)await sdb.collection("data/users/"+suid).doc(slug(name)).set(v);
+  sigCache[name]=v;
+}
+async function dropSaved(name){
+  try{localStorage.removeItem(SIGLOCAL(name))}catch(e){}
+  if(sdb&&suid)await sdb.collection("data/users/"+suid).doc(slug(name)).delete();
+  sigCache[name]=null;
+}
+function sigMsg(h){document.getElementById("sigMsg").innerHTML=h}
+function sigButtons(){
+  const name=S["s.engName"]||"", saved=name?sigCache[name]:null;
+  const sv=document.getElementById("sigSave"), fg=document.getElementById("sigForget");
+  sv.hidden=!(name&&S["sig.eng"]&&S["sig.eng.auto"]!==name);
+  sv.textContent="Save as "+(name.split(" ")[0]||"my")+"'s signature";
+  fg.hidden=!saved;
+}
+async function applyEngSig(){
+  const name=S["s.engName"]||"";
+  // a signature auto-filled for a different engineer is removed
+  if(S["sig.eng.auto"]&&S["sig.eng.auto"]!==name){delete S["sig.eng"];delete S["sigT.eng"];delete S["sigWH.eng"];S["sig.eng.auto"]="";}
+  if(!name){renderSig("eng");sigButtons();persist();status();return}
+  const v=await getSaved(name);
+  if(name!==S["s.engName"])return; // changed while loading
+  if(v&&v.img&&!S["sig.eng"]){
+    S["sig.eng"]=v.img;S["sigWH.eng"]=v.wh||[3,1];S["sig.eng.auto"]=name;
+    const d=new Date();S["sigT.eng"]=d.toLocaleDateString("en-GB")+" "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    sigMsg(`<span class="g">${esc(name)}'s saved signature has been added.</span>`);
+  }
+  renderSig("eng");sigButtons();persist();status();
+}
+document.getElementById("s_engname").addEventListener("change",()=>{sigMsg("");applyEngSig()});
+document.getElementById("sigSave").onclick=async()=>{
+  const name=S["s.engName"];if(!name||!S["sig.eng"])return;
+  try{await putSaved(name,{img:S["sig.eng"],wh:S["sigWH.eng"]||[3,1],savedAt:new Date().toISOString()});
+    S["sig.eng.auto"]=name;persist();sigButtons();
+    sigMsg(`<span class="g">Saved. ${esc(name)}'s signature will now be added automatically when their name is picked.</span>`)}
+  catch(e){sigButtons();sigMsg(`<span class="w">Saved on this phone only. It couldn't be saved to your account.</span>`)}
+};
+let forgetArmed=false;
+document.getElementById("sigForget").onclick=async()=>{
+  const name=S["s.engName"];if(!name)return;
+  if(!forgetArmed){forgetArmed=true;document.getElementById("sigForget").textContent="Tap again to remove";
+    setTimeout(()=>{forgetArmed=false;document.getElementById("sigForget").textContent="Remove saved signature"},5000);return}
+  forgetArmed=false;document.getElementById("sigForget").textContent="Remove saved signature";
+  try{await dropSaved(name)}catch(e){}
+  if(S["sig.eng.auto"]===name){delete S["sig.eng"];delete S["sigT.eng"];delete S["sigWH.eng"];S["sig.eng.auto"]=""}
+  renderSig("eng");persist();status();sigButtons();sigMsg(`Removed ${esc(name)}'s saved signature.`);
+};
+(async()=>{
+  try{const db=window.claude&&window.claude.use?await window.claude.use("db"):null;
+    const user=window.claude&&window.claude.use?await window.claude.use("user"):null;
+    const id=user&&user.id?await user.id():null;
+    if(db&&id){sdb=db;suid=id;}
+  }catch(e){}
+  for(const k in sigCache)delete sigCache[k];
+  applyEngSig();
+})();
+
+// New report (two-tap confirm in page)
+let armed=false;
+document.getElementById("newBtn").onclick=()=>{const msg=document.getElementById("newMsg"),b=document.getElementById("newBtn");
+  if(!armed){armed=true;b.textContent="Tap again to clear this report";msg.innerHTML='<span class="w">Everything on this form will be cleared. Engineer name is kept.</span>';
+    setTimeout(()=>{armed=false;b.textContent="Start a new report";msg.innerHTML=""},5000);return}
+  const eng=S["s.engName"];S={"s.engName":eng};defaults();armed=false;showMissing=false;b.textContent="Start a new report";msg.innerHTML="";
+  persist();fill();renderPresets();pMsg("");renderSig("eng");renderSig("cust");sigMsg("");applyEngSig();window.scrollTo({top:0,behavior:"smooth"});};
+
+// PDF
+let downloads=null, saveArmed=false;
+(async()=>{try{downloads=window.claude&&window.claude.use?await window.claude.use("downloads"):null}catch(e){downloads=null}})();
+function setMsg(html){document.getElementById("msg").innerHTML=html}
+function fmtDate(v){if(!v)return "";const [y,m,d]=v.split("-");return `${d}/${m}/${y}`}
+
+function buildPDF(){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"});
+  const W=210,M=14,BR=[0,101,87];
+  const res=(r)=>r==="pass"?"PASS":r==="fail"?"FAIL":r==="pass-notes"?"PASS (see notes)":"";
+  const colourRes=(data,col)=>{if(data.section==="body"&&data.column.index===col){const t=String(data.cell.raw||"");if(t.startsWith("PASS"))data.cell.styles.textColor=[29,122,62];if(t==="FAIL")data.cell.styles.textColor=[180,35,24];data.cell.styles.fontStyle="bold"}};
+  const base={theme:"grid",margin:{left:M,right:M,bottom:22},styles:{fontSize:8.5,cellPadding:1.6,lineColor:[200,208,206],lineWidth:.2,textColor:[20,30,28]},headStyles:{fillColor:BR,textColor:255,fontStyle:"bold"}};
+  // Header
+  doc.addImage(LOGO,"JPEG",M,10,11,11);doc.addImage(LOGO,"JPEG",W-M-11,10,11,11);
+  doc.setFont("helvetica","bold");doc.setFontSize(14);doc.setTextColor(...BR);doc.text("Promed Ltd Service & Test Report Form",W/2,15.5,{align:"center"});
+  doc.setFontSize(10.5);doc.setTextColor(20,30,28);doc.text(S["h.model"]||"Leonardo Mini",W/2,21,{align:"center"});
+  doc.autoTable({...base,startY:26,showHead:false,columnStyles:{0:{fontStyle:"bold",cellWidth:30,fillColor:[236,243,241]},2:{fontStyle:"bold",cellWidth:34,fillColor:[236,243,241]}},
+    body:[["Customer",(S["h.customer"]||"")+(S["h.address"]?"\n"+S["h.address"]:""),"Manufacturer",S["h.manufacturer"]||""],
+      ["Serial number",S["h.serial"]||"","Software version",S["h.software"]||""],["Date",fmtDate(S["h.date"]),"Next inspection",fmtDate(S["h.next"])]]});
+  CHECKS.forEach(sec=>{doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[[sec.title,"Result","Notes"]],
+    columnStyles:{0:{cellWidth:70},1:{cellWidth:30}},didParseCell:d=>colourRes(d,1),
+    body:sec.items.map(([id,name])=>[name,res(resultOf(`c.${sec.id}.${id}`)),S[`c.${sec.id}.${id}.n`]||""])})});
+  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,
+    head:[[{content:`Electrical safety test        Amps: ${S["e.amps"]||"—"}        Test voltage: ${S["e.volts"]||"—"}`,colSpan:5}],["Test","Measured","Limit","Result","Notes"]],
+    columnStyles:{0:{cellWidth:66},1:{cellWidth:22},2:{cellWidth:22},3:{cellWidth:26}},didParseCell:d=>colourRes(d,3),
+    body:ELEC.map(([id,name,,pu,op,lim])=>[name.replace("Ω","Ohm"),(S[`e.${id}.v`]?S[`e.${id}.v`]+" "+pu:""),`${op}${lim.toFixed(id==="ins"||id==="load"?2:0)} ${pu}`,res(resultOf("e."+id)),S[`e.${id}.n`]||""])});
+  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Max power range","Max","Setting 1","Setting 2","Setting 3","Result"]],didParseCell:d=>colourRes(d,5),
+    body:[...[[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>[lab,S[mk]?S[mk]+" W":"",S[`p.a${n}.1`]||"",S[`p.a${n}.2`]||"",S[`p.a${n}.3`]||"",res(S[`p.a${n}.r`])])]});
+  const eRows=[];["L","R"].forEach(s=>{eRows.push([{content:"Energy v time — "+(s==="L"?"left":"right"),colSpan:4,styles:{fontStyle:"bold",fillColor:[236,243,241]}}]);
+    [1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);eRows.push([(S[`g.${s}${i}.w`]?S[`g.${s}${i}.w`]+" W":"")+" x 10 s",S[`g.${s}${i}.rec`]?S[`g.${s}${i}.rec`]+" J":"",w==null?"":fmt(w*10)+" J",res(S[`g.${s}${i}.r`])])})});
+  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Watts x 10 seconds","Record","Target","P/F"]],didParseCell:d=>colourRes(d,3),body:eRows});
+  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Test equipment","Serial #","Manufacturer","Used"]],
+    body:EQUIP.map(([id,n,sn,m])=>[n,sn,m,S["q."+id]?"Yes":""])});
+  // Signatures
+  let y=doc.lastAutoTable.finalY+6; if(y>297-22-48){doc.addPage();y=18}
+  const boxW=(W-2*M-8)/2;
+  [["Engineer","eng",S["s.engName"]],["Customer","cust",S["s.custName"]]].forEach(([lab,who,name],i)=>{
+    const x=M+i*(boxW+8);doc.setDrawColor(200,208,206);doc.setLineWidth(.3);doc.rect(x,y,boxW,44);
+    doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(...BR);doc.text(lab+" signature",x+3,y+5);
+    if(S["sig."+who]){const wh=S["sigWH."+who]||[3,1];const ar=wh[0]/wh[1];let h=26,w=h*ar;if(w>boxW-6){w=boxW-6;h=w/ar}
+      doc.addImage(S["sig."+who],"PNG",x+3,y+7,w,h)}
+    doc.setFont("helvetica","normal");doc.setTextColor(20,30,28);doc.text("Name: "+(name||""),x+3,y+37);
+    doc.setFontSize(8);doc.setTextColor(90,105,100);doc.text(S["sigT."+who]?"Signed "+S["sigT."+who]:"Not signed",x+3,y+41.5)});
+  // Footer every page
+  const n=doc.getNumberOfPages();for(let p=1;p<=n;p++){doc.setPage(p);doc.setFont("helvetica","normal");doc.setFontSize(7.5);doc.setTextColor(90,105,100);
+    doc.text("QF 50 - 4 Service Test Form Leonardo Mini",M,289);doc.text(`Page ${p} of ${n}`,W-M,289,{align:"right"});
+    doc.text("Promed Ltd, Unit 15, West Newlands Industrial Estate, Somersham, PE28 3EB - Tel 01487 842842",W/2,293,{align:"center"})}
+  return doc;
+}
+function fname(){const clean=v=>String(v||"").replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g," ").trim().slice(0,80);
+  const dev=clean(S["h.model"])||"Device", cust=clean(S["h.customer"])||clean(S["s.custName"])||"Customer";
+  const d=S["h.date"]||today(), [y,m,dd]=d.split("-");
+  return `${dev} - ${cust} - ${dd}-${m}-${y}.pdf`}
+
+document.getElementById("saveBtn").onclick=async()=>{
+  const m=missing(); const sigs=!!S["sig.eng"]&&!!S["sig.cust"];
+  if((m.length||!sigs)&&!saveArmed){showMissing=true;status();saveArmed=true;
+    const first=document.querySelector(".row.missing,[data-row].missing");if(first)first.scrollIntoView({behavior:"smooth",block:"center"});
+    setMsg(`<span class="w">${m.length?m.length+" item"+(m.length>1?"s have":" has")+" no result (highlighted)":""}${m.length&&!sigs?" and ":""}${!sigs?"a signature is missing":""}. Tap Save PDF again to save anyway.</span>`);
+    setTimeout(()=>{saveArmed=false},8000);return}
+  saveArmed=false;
+  if(!window.jspdf){setMsg('<span class="e">The PDF tool didn\'t load. Check your signal and reopen the page.</span>');return}
+  try{setMsg("Creating PDF…");const pdf=buildPDF();
+    const file=new File([pdf.output("blob")],fname(),{type:"application/pdf"});
+    // Phones: the share sheet (Save to Files, email, WhatsApp…) works from a home-screen shortcut, where plain downloads don't
+    if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:file.name});
+    else pdf.save(fname());
+    setMsg('<span class="g">PDF saved. Tap "Start a new report" when you\'re ready for the next one.</span>')}
+  catch(e){const c=e&&e.code;setMsg(c==="declined"||(e&&e.name==="AbortError")?"Save cancelled.":c==="rate_limited"?'<span class="w">A save prompt is already open.</span>':`<span class="e">Couldn't save the PDF${c?" ("+c+")":""}.</span>`)}
+};
+
+// ---------- Device presets ----------
+// A preset is a device model: it fills model details, power settings and energy-test watts. Customer, serial and results stay per job.
+const PKEYS=["h.model","h.manufacturer","e.amps","e.volts","p.set.1","p.set.2","p.set.3","p.maxL","p.maxR",
+  "g.L1.w","g.L2.w","g.L3.w","g.R1.w","g.R2.w","g.R3.w"];
+const PLOCAL="promed-device-presets-v1";
+let presets=[], pdb=null, pDelArmed=false;
+const $=id=>document.getElementById(id);
+function pMsg(h){$("pMsg").innerHTML=h}
+function collect(){return PKEYS.map(k=>({k,v:S[k]??""}))}
+function localRead(){try{return JSON.parse(localStorage.getItem(PLOCAL)||"[]")}catch(e){return []}}
+function localWrite(list){try{localStorage.setItem(PLOCAL,JSON.stringify(list))}catch(e){}}
+function renderPresets(){
+  const sel=$("presetSel"), cur=S["preset.id"]||"";
+  const list=[...presets].sort((a,b)=>String(a.name).localeCompare(String(b.name),"en-GB",{numeric:true}));
+  sel.innerHTML='<option value="">'+(list.length?"— Choose a device —":"No saved devices yet")+'</option>'+
+    list.map(p=>`<option value="${esc(p.id)}">${esc(p.name||"Unnamed device")}</option>`).join("");
+  sel.value=list.some(p=>p.id===cur)?cur:"";
+  const has=!!sel.value; $("pUpdate").hidden=!has; $("pDelete").hidden=!has;
+}
+function applyPreset(p){
+  const f={}; (p.fields||[]).forEach(x=>{if(x&&typeof x.k==="string")f[x.k]=x.v});
+  PKEYS.forEach(k=>{S[k]=k in f?f[k]:""});
+  S["preset.id"]=p.id; fill(); persist();
+  pMsg(`<span class="g">Filled in from “${esc(p.name)}”. Check the details, then carry on with the tests.</span>`);
+}
+$("presetSel").addEventListener("change",e=>{
+  const id=e.target.value; pDelArmed=false; $("pDelete").textContent="Delete preset";
+  if(!id){S["preset.id"]="";persist();renderPresets();pMsg("");return}
+  const p=presets.find(x=>x.id===id); if(p)applyPreset(p); renderPresets();
+});
+$("pSave").onclick=()=>{$("pNameRow").hidden=false;
+  $("pName").value=S["h.model"]||"";
+  $("pName").focus()};
+$("pCancel").onclick=()=>{$("pNameRow").hidden=true};
+async function writePreset(id,name){
+  const body={name,fields:collect(),updatedAt:new Date().toISOString()};
+  if(pdb){await pdb.collection("devices").doc(id).set(body)}
+  else{const list=localRead().filter(p=>p.id!==id);list.push({id,...body});localWrite(list);presets=list;renderPresets()}
+}
+function newId(){return "d"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function dbErr(e){const c=e&&e.code;return c==="quota_exceeded"?"The preset list is full. Delete some old presets first.":
+  c==="invalid_argument"?"You don't have permission to change presets on this form.":"Couldn't save the preset. Check your signal and try again."}
+$("pConfirm").onclick=async()=>{
+  const name=$("pName").value.trim(); if(!name){pMsg('<span class="w">Give the preset a name first.</span>');return}
+  const id=newId();
+  try{await writePreset(id,name);S["preset.id"]=id;persist();$("pNameRow").hidden=true;renderPresets();
+    pMsg(`<span class="g">Saved “${esc(name)}”. It now appears in the list.</span>`)}
+  catch(e){pMsg(`<span class="e">${dbErr(e)}</span>`)}
+};
+$("pUpdate").onclick=async()=>{
+  const p=presets.find(x=>x.id===S["preset.id"]); if(!p)return;
+  try{await writePreset(p.id,p.name);pMsg(`<span class="g">Updated “${esc(p.name)}” with the details on this form.</span>`)}
+  catch(e){pMsg(`<span class="e">${dbErr(e)}</span>`)}
+};
+$("pDelete").onclick=async()=>{
+  const p=presets.find(x=>x.id===S["preset.id"]); if(!p)return;
+  if(!pDelArmed){pDelArmed=true;$("pDelete").textContent="Tap again to delete";pMsg(`<span class="w">This removes “${esc(p.name)}” from the list. The form itself isn't cleared.</span>`);
+    setTimeout(()=>{pDelArmed=false;$("pDelete").textContent="Delete preset"},5000);return}
+  pDelArmed=false;$("pDelete").textContent="Delete preset";
+  try{if(pdb){await pdb.collection("devices").doc(p.id).delete()}else{const list=localRead().filter(x=>x.id!==p.id);localWrite(list);presets=list}
+    S["preset.id"]="";persist();renderPresets();pMsg(`Deleted “${esc(p.name)}”.`)}
+  catch(e){pMsg(`<span class="e">Couldn't delete the preset. Try again.</span>`)}
+};
+function useLocalPresets(){pdb=null;presets=localRead();$("presetSrc").textContent="saved on this phone only";renderPresets()}
+presets=[];renderPresets();$("presetSrc").textContent="loading…";
+(async()=>{
+  let db=null; try{db=window.claude&&window.claude.use?await window.claude.use("db"):null}catch(e){db=null}
+  if(!db){useLocalPresets();return}
+  pdb=db; $("presetSrc").textContent="shared across your devices";
+  db.collection("devices").onSnapshot(snap=>{
+    presets=snap.docs.filter(d=>d.exists).map(d=>({id:d.id,...d.data()})); renderPresets();
+  },()=>useLocalPresets());
+})();
+
+load();fill();renderSig("eng");renderSig("cust");
+// Keeps a copy on the phone so the form still opens with no signal
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+})();
+</script>
+
+</body></html>
