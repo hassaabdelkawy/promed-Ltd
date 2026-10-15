@@ -1,6 +1,6 @@
 // Offline support: always try the network first so updates show up straight away,
 // and fall back to the last saved copy when there's no signal.
-const CACHE = "promed-service-v1";
+const CACHE = "promed-service-v2";
 const FILES = [
   "./",
   "./manifest.webmanifest",
@@ -31,7 +31,8 @@ self.addEventListener("fetch", e => {
   // Weak signal: don't wait more than 4 s before using the saved copy
   const timeout = new Promise((_, no) => setTimeout(no, 4000));
   e.respondWith(
-    Promise.race([fetch(e.request), timeout])
+    // Our own files: ask GitHub every time (cheap "not modified" check) instead of trusting the browser's 10-minute copy
+    Promise.race([fetch(e.request, new URL(e.request.url).origin === location.origin ? { cache: "no-cache" } : {}), timeout])
       .then(r => {
         if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
         return r;

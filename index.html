@@ -342,7 +342,8 @@ function defaults(){
   if(!S["s.engName"]){try{S["s.engName"]=localStorage.getItem(ENGKEY)||""}catch(e){}}
 }
 let saveT;
-function persist(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));if(S["s.engName"])localStorage.setItem(ENGKEY,S["s.engName"])}catch(e){}},250)}
+function persistNow(){clearTimeout(saveT);try{localStorage.setItem(KEY,JSON.stringify(S));if(S["s.engName"])localStorage.setItem(ENGKEY,S["s.engName"])}catch(e){}}
+function persist(){clearTimeout(saveT);saveT=setTimeout(persistNow,250)}
 function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function seg(k){return `<div class="seg" role="group"><button type="button" data-k="${k}" data-v="pass" aria-pressed="false">Pass</button><button type="button" data-k="${k}" data-v="fail" aria-pressed="false">Fail</button><button type="button" data-k="${k}" data-v="na" aria-pressed="false">N/A</button></div>`}
@@ -779,7 +780,12 @@ presets=withBuiltin([]);renderPresets();$("presetSrc").textContent="loading…";
 
 load();fill();renderSig("eng");renderSig("cust");
 // Keeps a copy on the phone so the form still opens with no signal
-if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+if("serviceWorker" in navigator){
+  const hadSW=!!navigator.serviceWorker.controller; let reloaded=false;
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
+  // A new version has taken over: reload once so it shows straight away (the report is already saved on the phone)
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!hadSW||reloaded)return;reloaded=true;persistNow();location.reload()});
+}
 })();
 </script>
 
