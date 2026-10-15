@@ -49,9 +49,9 @@ nav.jump button.on{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--br
 nav.jump .navtitle{display:none}
 @media (min-width:1000px){
   .wrap{--maxw:1100px;display:grid;grid-template-columns:230px minmax(0,1fr);column-gap:24px;row-gap:14px;align-items:start}
-  .wrap>*{grid-column:2}
+  .wrap>*,#outSections>*{grid-column:2}
   .wrap>header.top{grid-column:1/-1}
-  nav.jump{grid-column:1;grid-row:2/span 11;flex-direction:column;overflow:visible;margin:0;padding:0;border:0;background:none;top:calc(16px + env(safe-area-inset-top,0px))}
+  nav.jump{grid-column:1;grid-row:2/span 12;flex-direction:column;overflow:visible;margin:0;padding:0;border:0;background:none;top:calc(16px + env(safe-area-inset-top,0px))}
   nav.jump .navtitle{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 4px 4px}
   nav.jump button{border-radius:8px;justify-content:space-between;width:100%;padding:9px 12px}
   section.sheet{scroll-margin-top:16px}
@@ -187,7 +187,7 @@ footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
     <img src="data:image/jpeg;base64,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" alt="Promed logo">
     <div>
       <h1>Service &amp; Test Report</h1>
-      <p>Promed Ltd · Leonardo Mini · QF 50-4</p>
+      <p id="formSub">Promed Ltd · Leonardo Mini · QF 50-4</p>
     </div>
   </header>
 
@@ -220,6 +220,7 @@ footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
       <label class="f full">Customer address<textarea id="h_address" data-k="h.address" rows="2"></textarea></label>
       <label class="f">Model<input type="text" id="h_model" data-k="h.model"></label>
       <label class="f">Manufacturer<input type="text" id="h_manufacturer" data-k="h.manufacturer"></label>
+      <label class="f">Type<input type="text" id="h_type" data-k="h.type"></label>
       <label class="f">Serial number<input type="text" id="h_serial" data-k="h.serial" autocapitalize="characters"></label>
       <label class="f">Software version<input type="text" id="h_software" data-k="h.software"></label>
       <label class="f">Date<input type="date" id="h_date" data-k="h.date"></label>
@@ -249,6 +250,8 @@ footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
     <h2>Energy v time <small>Target = watts × 10 s</small></h2>
     <div id="energy"></div>
   </section>
+
+  <div id="outSections" style="display:contents"></div>
 
   <section class="sheet" id="sec-equip">
     <h2>Test equipment used</h2>
@@ -311,27 +314,78 @@ footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
 const LOGO="data:image/jpeg;base64,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";
 const KEY="promed-leo-mini-draft-v1", ENGKEY="promed-engineer-name";
 
-const CHECKS=[
-  {id:"vis",title:"Visual inspection",items:[["labels","Labelling / warning labels"],["signs","Information signs / warning signs"],["manual","User manual"],["complete","Equipment complete"],["conn","Connections"],["surfaces","External surfaces of device"]]},
-  {id:"fun",title:"Function capability check",items:[["footswitch","Footswitch"],["beam","Beam guidance system"],["interlocks","Interlocks"],["display","Display & operations"]]},
-  {id:"mon",title:"Monitoring, safety, display & reporting",items:[["eyewear","Laser safety eyewear"],["lights","Indicator lights"],["keycode","Key code"],["estop","Emergency stop button"]]}
+// ---------- Device types ----------
+// Each device type (one per QF service sheet) lists which checks, electrical tests and output tests its form has.
+const CHK={
+  labels:["Labelling / warning labels","Laser class, power and wavelength"],
+  signs:["Information signs / warning signs","Correct and complete"],
+  manual:["User manual"],complete:["Equipment complete"],conn:["Connections"],surfaces:["External surfaces of device"],
+  water:["Water level"],ion:["Water ion level","Leave running for several minutes before recording"],
+  drying:["Drying agent cartridges condition"],filter:["Water filter"],
+  footswitch:["Footswitch"],beam:["Beam guidance system","Coupling / decoupling / aiming beam"],interlocks:["Interlocks"],display:["Display & operations"],
+  eyewear:["Laser safety eyewear"],lights:["Indicator lights"],keycode:["Key code"],keyswitch:["Key switch"],
+  estop:["Emergency stop button"],blast:["Blast shield condition"]
+};
+const SECT={vis:["Visual inspection","Visual"],fun:["Function capability check","Function"],mon:["Monitoring, safety, display & reporting","Safety & display"]};
+// [id, name, unit, PDF unit, operator, limit, decimals]
+const ELEC_ALL=[
+  ["cont","Earth continuity (10 A)","Ω","Ohm","<",0.2,3],
+  ["load","Mains loading at max laser power output","kVA","kVA","<",3.12,2],
+  ["ins","Mains insulation (500 V)","MΩ","MOhm",">",2.00,2],
+  ["elN","Earth leakage current (N)","µA","uA","<",500,0],
+  ["elR","Earth leakage current (R)","µA","uA","<",500,0],
+  ["elsfN","Earth leakage current, S.F. condition (N)","µA","uA","<",1000,0],
+  ["elsfR","Earth leakage current, S.F. condition (R)","µA","uA","<",1000,0],
+  ["enN","Enclosure leakage (N)","µA","uA","<",100,0],
+  ["enR","Enclosure leakage (R)","µA","uA","<",100,0],
+  ["ennoN","Enclosure leakage, S.F. neutral open (N)","µA","uA","<",500,0],
+  ["ennoR","Enclosure leakage, S.F. neutral open (R)","µA","uA","<",500,0],
+  ["eneoN","Enclosure leakage, S.F. earth open (N)","µA","uA","<",500,0],
+  ["eneoR","Enclosure leakage, S.F. earth open (R)","µA","uA","<",500,0]
 ];
-const ELEC=[
-  ["load","Mains loading at max laser power output","kVA","kVA","<",3.12],
-  ["ins","Mains insulation (500 V)","MΩ","MOhm",">",2.00],
-  ["elN","Earth leakage current (N)","µA","uA","<",500],
-  ["elR","Earth leakage current (R)","µA","uA","<",500],
-  ["elsfN","Earth leakage current, S.F. condition (N)","µA","uA","<",1000],
-  ["elsfR","Earth leakage current, S.F. condition (R)","µA","uA","<",1000],
-  ["enN","Enclosure leakage (N)","µA","uA","<",100],
-  ["enR","Enclosure leakage (R)","µA","uA","<",100],
-  ["ennoN","Enclosure leakage, S.F. neutral open (N)","µA","uA","<",500],
-  ["ennoR","Enclosure leakage, S.F. neutral open (R)","µA","uA","<",500],
-  ["eneoN","Enclosure leakage, S.F. earth open (N)","µA","uA","<",500],
-  ["eneoR","Enclosure leakage, S.F. earth open (R)","µA","uA","<",500]
-];
+const LEAK=["elN","elR","elsfN","elsfR","enN","enR","ennoN","ennoR","eneoN","eneoR"];
+const VIS6=["labels","signs","manual","complete","conn","surfaces"], FUN4=["footswitch","beam","interlocks","display"];
+const fmt=n=>Math.round(n*100)/100+"";
+// Output-test rows: {sub} starts a group; otherwise {label, tgt (shown target), min/max (auto pass/fail when given)}
+const pct20=ws=>ws.map(w=>({label:w+" W",min:w*.8,max:w*1.2,tgt:fmt(w*.8)+"–"+fmt(w*1.2)+" W"}));
+const watts=ws=>ws.map(w=>({label:w+" W",tgt:"set "+w+" W"}));
+const pulses=ws=>ws.map(w=>({label:w+" W",tgt:"expect "+fmt(w*3)+" J"}));
+const PULSE_INFO="Pulse 1 s, pause 0.3 s, 3 pulses";
+const TPL={
+  mini:{name:"Leonardo Mini",qf:"QF 50-4",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
+    elec:["load","ins",...LEAK],mini:true},
+  sphinx:{name:"Sphinx Jr",qf:"QF 46-3",chk:{vis:[...VIS6,"water","ion","drying"],fun:FUN4,mon:["eyewear","lights","keyswitch","estop","blast"]},
+    elec:["cont","load",...LEAK],
+    out:[{id:"ho",title:"Holmium test",nav:"Holmium",info:"Display setting vs measured power",unit:"W",
+      rows:[[.5,1],[1.5,1],[2.5,1],[3.5,1],[.5,5],[1.5,5],[2.5,5],[3.5,5],[.5,10],[1.5,10],[2.5,10],[3,9],[3.5,8],[.5,20],[3.3,9]]
+        .map(([j,hz])=>({label:j.toFixed(1)+" J · "+hz+" Hz",tgt:"J×Hz = "+fmt(j*hz)+" W"}))}]},
+  dual200:{name:"Leonardo Dual 200",qf:"QF 51-3",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
+    elec:["cont","ins","load",...LEAK],
+    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Power selected vs measured",unit:"W",
+          rows:[{sub:"980 nm"},...watts([10,25,50,100,130,160]),{sub:"1470 nm"},...watts([5,10,20,30,40])]},
+         {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
+          rows:[{sub:"980 nm"},...pulses([10,25,50,100,130,160]),{sub:"1470 nm"},...pulses([5,10,20,30,40])]}]},
+  dual100:{name:"Leonardo Dual 100",qf:"QF 52-2",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
+    elec:["cont","ins","load",...LEAK],
+    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Power selected vs measured",unit:"W",
+          rows:[{sub:"980 nm"},...watts([5,10,20,40,60,85]),{sub:"1470 nm"},...watts([2,5,10,15])]},
+         {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
+          rows:[{sub:"980 nm"},...pulses([5,10,20,40,60,85]),{sub:"1470 nm"},...pulses([2,5,10,15])]}]},
+  revolix:{name:"Revolix HTL",qf:"QF 53-2",chk:{vis:[...VIS6,"water","ion","drying","filter"],fun:FUN4,mon:["eyewear","lights","keyswitch","estop","blast"]},
+    elec:["cont","ins","load",...LEAK],
+    out:[{id:"pw",title:"Power test",nav:"Power",info:"Set value ±20%: Pass/Fail fills in",unit:"W",rows:pct20([5,10,20,40,60,75,100,125,150])},
+         {id:"jo",title:"Joules reading",nav:"Joules",info:"Power selected × 10 seconds",unit:"J",
+          rows:[5,10,20,40,60,75,100,125,150].map(w=>({label:w+" W × 10 s",tgt:"expect "+w*10+" J"}))}]},
+  duster:{name:"Leonardo Duster",qf:"QF 54-1",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop","blast"]},
+    elec:["cont","ins","load",...LEAK],
+    out:[{id:"cw",title:"CW mode test",nav:"CW mode",info:"Min–max: Pass/Fail fills in",unit:"W",rows:pct20([20,30,40,50,60])},
+         {id:"qcw",title:"QCW mode test",nav:"QCW mode",info:"Min–max: Pass/Fail fills in",unit:"W",
+          rows:[["18 W @ 3 Hz",14.4,21],["30 W @ 5 Hz",24,36],["48 W @ 8 Hz",38.4,57.6],["60 W @ 10 Hz",48,72]]
+            .map(([label,min,max])=>({label,min,max,tgt:fmt(min)+"–"+fmt(max)+" W"}))}]}
+};
+let T=TPL.mini, CHECKS=[], ELEC=[], OUTS=[], OUTROW={};
 const EQUIP=[["st1","Safe Test 60","03H-0380","Seaward"],["vega1","Vega Display","3134757","Ophir"],["cw1","CW Head","538 316","Ophir"],["st2","Safe Test 60","19R-4925","Seaward"],["vega2","Vega Display","3134752","Ophir"],["cw2","CW Head","3139675","Ophir"]];
-const DEFAULTS={"h.model":"Leonardo Mini"};
+const DEFAULTS={"h.model":"Leonardo Mini","tpl":"mini"};
 
 let S={};
 function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)||{};}catch(e){S={}}
@@ -349,37 +403,68 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 function seg(k){return `<div class="seg" role="group"><button type="button" data-k="${k}" data-v="pass" aria-pressed="false">Pass</button><button type="button" data-k="${k}" data-v="fail" aria-pressed="false">Fail</button><button type="button" data-k="${k}" data-v="na" aria-pressed="false">N/A</button></div>`}
 const RLABEL={pass:"Pass",fail:"Fail",na:"N/A"};
 
-// Build pass/fail check sections
+// ---------- Build the form for the chosen device type ----------
 const addNote=`<button type="button" class="addnote" data-addnote>+ Add note</button>`;
-document.getElementById("checkSections").innerHTML=CHECKS.map(sec=>`
-  <section class="sheet" id="sec-${sec.id}" style="margin-bottom:14px"><h2>${esc(sec.title)}<button type="button" class="chip allpass" data-allpass="${sec.id}">All pass</button></h2>
-  ${sec.items.map(([id,name])=>`<div class="row chk" data-row="c.${sec.id}.${id}">
-    <div class="name">${esc(name)}</div>${seg(`c.${sec.id}.${id}.r`)}${addNote}
-    <div class="notes"><input type="text" id="n_${sec.id}_${id}" data-k="c.${sec.id}.${id}.n" placeholder="Notes" enterkeyhint="next"></div></div>`).join("")}
-  </section>`).join("");
-document.getElementById("checkSections").lastElementChild.style.marginBottom="0";
-
-document.getElementById("elecRows").innerHTML=ELEC.map(([id,name,unit,,op,lim])=>`
-  <div class="row el" data-row="e.${id}">
-    <div class="name">${esc(name)}${id==="load"?"<small>= amps × test voltage ÷ 1000</small>":""}</div>${seg(`e.${id}.r`)}
-    <div class="meas"><div class="val"><input type="text" inputmode="decimal" id="m_${id}" data-k="e.${id}.v" ${id==="load"?'readonly tabindex="-1" placeholder="Fills in from amps × volts"':'placeholder="Measured"'}><span>${unit}</span></div>
-    <span class="limit">limit ${op}${lim.toFixed(id==="ins"||id==="load"?2:0)} ${unit}</span></div>
-    ${addNote}<div class="notes"><input type="text" id="en_${id}" data-k="e.${id}.n" placeholder="Notes" enterkeyhint="next"></div>
-  </div>`).join("");
-
 const noteBox=k=>`${addNote}<div class="notes"><input type="text" id="${k.replace(/\./g,'_')}" data-k="${k}" placeholder="Notes" enterkeyhint="next"></div>`;
 const cell=(lab,k,ph)=>`<label><span>${lab}</span><input type="text" inputmode="decimal" enterkeyhint="next" id="${k.replace(/\./g,'_')}" data-k="${k}"${ph?` placeholder="${ph}"`:""}></label>`;
+const nameHtml=(name,hint)=>esc(name)+(hint?`<small>${esc(hint)}</small>`:"");
+
+// Leonardo Mini's own sections (built once, shown only for that device type)
 document.getElementById("powerRows").innerHTML=
   [[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>`<div class="row below" data-row="p.a${n}"><div class="name">${lab}</div>${seg(`p.a${n}.r`)}
     <div class="cells">${cell("Max (W)",mk)}${cell("Setting 1",`p.a${n}.1`)}${cell("Setting 2",`p.a${n}.2`)}${cell("Setting 3",`p.a${n}.3`)}</div>${noteBox(`p.a${n}.n`)}</div>`).join("");
-
 document.getElementById("energy").innerHTML=[["L","Left"],["R","Right"]].map(([s,lab])=>`
   <div class="sub">${lab}</div>
   ${[1,2,3].map(i=>`<div class="row below" data-row="g.${s}${i}"><div class="name">Test ${i}</div>${seg(`g.${s}${i}.r`)}
     <div class="cells c3">${cell("Watts × 10 s",`g.${s}${i}.w`,"W")}${cell("Record (J)",`g.${s}${i}.rec`,"J")}
     <div class="tgtc"><span>Target</span><b id="tgt_${s}${i}">– J</b></div></div>${noteBox(`g.${s}${i}.n`)}</div>`).join("")}`).join("");
-
 document.getElementById("equip").innerHTML=EQUIP.map(([id,n,sn,m])=>`<label><input type="checkbox" id="q_${id}" data-k="q.${id}"><span><b>${esc(n)}</b><small>${esc(sn)} · ${esc(m)}</small></span></label>`).join("");
+
+let NAV=[], SECROWS={};
+function render(){
+  const id=TPL[S.tpl]?S.tpl:"mini"; T=TPL[id];
+  CHECKS=Object.keys(SECT).map(s=>({id:s,title:SECT[s][0],nav:SECT[s][1],items:T.chk[s].map(c=>[c,...CHK[c]])}));
+  ELEC=ELEC_ALL.filter(r=>T.elec.includes(r[0]));
+  OUTS=(T.out||[]).map(o=>{let i=0;return {...o,key:id+"_"+o.id,rows:o.rows.map(r=>r.sub?r:{...r,k:`o.${id}_${o.id}.${++i}`})}});
+  OUTROW={};OUTS.forEach(o=>o.rows.forEach(r=>{if(r.k)OUTROW[r.k]={...r,unit:o.unit}}));
+
+  document.getElementById("checkSections").innerHTML=CHECKS.map(sec=>`
+    <section class="sheet" id="sec-${sec.id}" style="margin-bottom:14px"><h2>${esc(sec.title)}<button type="button" class="chip allpass" data-allpass="${sec.id}">All pass</button></h2>
+    ${sec.items.map(([cid,name,hint])=>`<div class="row chk" data-row="c.${sec.id}.${cid}">
+      <div class="name">${nameHtml(name,hint)}</div>${seg(`c.${sec.id}.${cid}.r`)}${noteBox(`c.${sec.id}.${cid}.n`)}</div>`).join("")}
+    </section>`).join("");
+  document.getElementById("checkSections").lastElementChild.style.marginBottom="0";
+
+  document.getElementById("elecRows").innerHTML=ELEC.map(([eid,name,unit,,op,lim,dec])=>`
+    <div class="row el" data-row="e.${eid}">
+      <div class="name">${esc(name)}${eid==="load"?"<small>= amps × test voltage ÷ 1000</small>":""}</div>${seg(`e.${eid}.r`)}
+      <div class="meas"><div class="val"><input type="text" inputmode="decimal" id="m_${eid}" data-k="e.${eid}.v" ${eid==="load"?'readonly tabindex="-1" placeholder="Fills in from amps × volts"':'placeholder="Measured"'}><span>${unit}</span></div>
+      <span class="limit">limit ${op}${lim.toFixed(dec)} ${unit}</span></div>
+      ${noteBox(`e.${eid}.n`)}
+    </div>`).join("");
+
+  document.getElementById("outSections").innerHTML=OUTS.map(o=>`
+    <section class="sheet" id="sec-o-${o.key}"><h2>${esc(o.title)}<small>${esc(o.info||"")}</small></h2>
+    ${o.rows.map(r=>r.sub?`<div class="sub">${esc(r.sub)}</div>`:`<div class="row el" data-row="${r.k}">
+      <div class="name">${esc(r.label)}</div>${seg(r.k+".r")}
+      <div class="meas"><div class="val"><input type="text" inputmode="decimal" enterkeyhint="next" id="${r.k.replace(/\./g,'_')}" data-k="${r.k}.v" placeholder="Measured"><span>${o.unit}</span></div>
+      <span class="limit">${esc(r.tgt)}</span></div>${noteBox(r.k+".n")}</div>`).join("")}
+    </section>`).join("");
+  document.getElementById("sec-power").hidden=!T.mini; document.getElementById("sec-energy").hidden=!T.mini;
+  document.getElementById("formSub").textContent=`Promed Ltd · ${T.name} · ${T.qf}`;
+
+  // rows per nav section, for progress counts
+  SECROWS={};CHECKS.forEach(c=>SECROWS[c.id]=c.items.map(([cid])=>`c.${c.id}.${cid}`));
+  SECROWS.elec=ELEC.map(([eid])=>"e."+eid);
+  OUTS.forEach(o=>SECROWS["o-"+o.key]=o.rows.filter(r=>r.k).map(r=>r.k));
+  if(T.mini){SECROWS.power=["p.a1","p.a2"];SECROWS.energy=["L1","L2","L3","R1","R2","R3"].map(x=>"g."+x)}
+
+  NAV=[["sec-device","Device","device"],...CHECKS.map(c=>["sec-"+c.id,c.nav,c.id]),["sec-elec","Electrical","elec"],
+    ...(T.mini?[["sec-power","Max power","power"],["sec-energy","Energy","energy"]]:[]),
+    ...OUTS.map(o=>["sec-o-"+o.key,o.nav,"o-"+o.key]),["sec-equip","Equipment","equip"],["sec-sign","Sign-off","sign"]];
+  document.getElementById("jump").innerHTML='<div class="navtitle">Sections</div>'+NAV.map(([sid,lab,key])=>`<button type="button" data-jump="${sid}" data-key="${key}"><span>${esc(lab)}</span><i></i></button>`).join("");
+  if(io){io.disconnect();NAV.forEach(([sid])=>{const el=document.getElementById(sid);if(el)io.observe(el)})}
+}
 
 // Bind inputs
 function sig3(x){if(!isFinite(x))return "";if(x===0)return "0";const t=x.toPrecision(3);return t.includes("e")?String(Number(t)):t}
@@ -399,20 +484,22 @@ function fill(){
   targets(); status();
 }
 function num(v){if(v==null||String(v).trim()==="")return null;const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n}
-function autoElec(id){
-  const row=ELEC.find(r=>r[0]===id); const v=num(S[`e.${id}.v`]);
-  const rk=`e.${id}.r`, ak=`e.${id}.auto`;
+// Fill Pass/Fail from a limit unless the engineer picked a result themselves
+function autoSet(k,ok){
+  const v=num(S[k+".v"]), rk=k+".r", ak=k+".auto";
   if(v==null){ if(S[ak]){S[rk]="";S[ak]=false} return }
   if(S[rk] && !S[ak]) return; // manual override stays
-  const ok=row[4]===">"?v>row[5]:v<row[5];
-  S[rk]=ok?"pass":"fail"; S[ak]=true;
+  S[rk]=ok(v)?"pass":"fail"; S[ak]=true;
 }
-function targets(){["L","R"].forEach(s=>[1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);document.getElementById(`tgt_${s}${i}`).textContent=w==null?"– J":fmt(w*10)+" J"}))}
-function fmt(n){return Math.round(n*100)/100+""}
+function autoElec(id){const row=ELEC_ALL.find(r=>r[0]===id);autoSet("e."+id,v=>row[4]===">"?v>row[5]:v<row[5])}
+function autoOut(k){const r=OUTROW[k];if(r&&r.min!=null)autoSet(k,v=>v>=r.min&&v<=r.max)}
+function targets(){if(!T.mini)return;["L","R"].forEach(s=>[1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);document.getElementById(`tgt_${s}${i}`).textContent=w==null?"– J":fmt(w*10)+" J"}))}
 
 document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;
   S[k]=e.target.type==="checkbox"?e.target.checked:e.target.value;
-  const m=k.match(/^e\.(\w+)\.v$/); if(m){autoElec(m[1]); fill();} else if(k==="e.amps"||k==="e.volts"){fill();} else {if(k.startsWith("g."))targets(); status();}
+  const m=k.match(/^e\.(\w+)\.v$/), o=k.match(/^(o\..+)\.v$/);
+  if(m){autoElec(m[1]); fill();} else if(o&&OUTROW[o[1]]&&OUTROW[o[1]].min!=null){autoOut(o[1]); fill();}
+  else if(k==="e.amps"||k==="e.volts"){fill();} else {if(k.startsWith("g."))targets(); status();}
   persist();});
 document.addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;
   const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();});
@@ -420,18 +507,14 @@ document.getElementById("plus1y").onclick=()=>{const d=S["h.date"]?new Date(S["h
   S["h.next"]=d.toISOString().slice(0,10);fill();persist();};
 
 // Section navigation
-const NAV=[["sec-device","Device","device"],...CHECKS.map(c=>["sec-"+c.id,{vis:"Visual",fun:"Function",mon:"Safety & display"}[c.id],c.id]),
-  ["sec-elec","Electrical","elec"],["sec-power","Max power","power"],["sec-energy","Energy","energy"],["sec-equip","Equipment","equip"],["sec-sign","Sign-off","sign"]];
-document.getElementById("jump").innerHTML='<div class="navtitle">Sections</div>'+NAV.map(([id,lab,key])=>`<button type="button" data-jump="${id}" data-key="${key}"><span>${esc(lab)}</span><i></i></button>`).join("");
 document.getElementById("jump").addEventListener("click",e=>{const b=e.target.closest("[data-jump]");if(!b)return;
   const sec=document.getElementById(b.dataset.jump);if(sec)sec.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})});
-if("IntersectionObserver" in window){const vis=new Map();
-  const io=new IntersectionObserver(es=>{es.forEach(en=>vis.set(en.target.id,en.isIntersecting));
-    const first=NAV.find(([id])=>vis.get(id));if(!first)return;
+const io="IntersectionObserver" in window?(()=>{const vis=new Map();
+  return new IntersectionObserver(es=>{es.forEach(en=>vis.set(en.target.id,en.isIntersecting));
+    const first=NAV.find(([sid])=>vis.get(sid));if(!first)return;
     document.querySelectorAll("nav.jump button").forEach(b=>{const on=b.dataset.jump===first[0];b.classList.toggle("on",on);
       if(on&&window.innerWidth<1000){const nav=document.getElementById("jump");const l=b.offsetLeft-16;if(l<nav.scrollLeft||b.offsetLeft+b.offsetWidth>nav.scrollLeft+nav.clientWidth)nav.scrollTo({left:l,behavior:"smooth"})}})},
-    {rootMargin:"-80px 0px -55% 0px"});
-  NAV.forEach(([id])=>{const el=document.getElementById(id);if(el)io.observe(el)});}
+    {rootMargin:"-80px 0px -55% 0px"})})():null;
 
 // "All pass" for a check section (never overwrites a Fail)
 document.addEventListener("click",e=>{const b=e.target.closest("[data-allpass]");if(!b)return;
@@ -451,37 +534,38 @@ document.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.target.tagName!=="
 // A note typed without choosing Pass / Fail / N/A counts as validated by notes ("note"; older drafts may also store it as the result).
 function resultOf(k){const r=S[k+".r"], note=!!(S[k+".n"]||"").trim();
   if(r==="note")return note?"note":"";if(r)return r;return note?"note":""}
+const rowName=k=>{const o=OUTROW[k];if(o)return o.label;const c=k.match(/^c\.\w+\.(\w+)$/);if(c)return CHK[c[1]][0];
+  const e=ELEC_ALL.find(r=>"e."+r[0]===k);return e?e[1]:k};
 function missing(){
   const out=[];
-  CHECKS.forEach(sec=>sec.items.forEach(([id,name])=>{if(!resultOf(`c.${sec.id}.${id}`))out.push(["c."+sec.id+"."+id,name])}));
-  ELEC.forEach(([id,name])=>{if(!resultOf("e."+id))out.push(["e."+id,name])});
-  [1,2].forEach(n=>{const any=[1,2,3].some(i=>(S[`p.a${n}.${i}`]||"").trim());if((any||S[`p.a${n}.r`])&&!resultOf(`p.a${n}`))out.push(["p.a"+n,"Max power "+(n===1?"left":"right")])});
-  ["L","R"].forEach(s=>[1,2,3].forEach(i=>{const any=(S[`g.${s}${i}.w`]||"").trim()||(S[`g.${s}${i}.rec`]||"").trim();if((any||S[`g.${s}${i}.r`])&&!resultOf(`g.${s}${i}`))out.push([`g.${s}${i}`,"Energy v time "+s+i])}));
+  // checks, electrical and output tests all need a result
+  Object.keys(SECROWS).filter(s=>s!=="power"&&s!=="energy").forEach(s=>SECROWS[s].forEach(k=>{if(!resultOf(k))out.push([k,rowName(k)])}));
+  if(T.mini){
+    [1,2].forEach(n=>{const any=[1,2,3].some(i=>(S[`p.a${n}.${i}`]||"").trim());if((any||S[`p.a${n}.r`])&&!resultOf(`p.a${n}`))out.push(["p.a"+n,"Max power "+(n===1?"left":"right")])});
+    ["L","R"].forEach(s=>[1,2,3].forEach(i=>{const any=(S[`g.${s}${i}.w`]||"").trim()||(S[`g.${s}${i}.rec`]||"").trim();if((any||S[`g.${s}${i}.r`])&&!resultOf(`g.${s}${i}`))out.push([`g.${s}${i}`,"Energy v time "+s+i])}));
+  }
   return out;
 }
 function status(){
   const m=missing(); const set=new Set(m.map(x=>x[0]));
   document.querySelectorAll("[data-row]").forEach(r=>{const k=r.dataset.row;r.classList.toggle("missing",showMissing&&set.has(k));
     const note=!!(S[k+".n"]||"").trim();r.classList.toggle("noted",!S[k+".r"]&&note);r.classList.toggle("has-notes",note)});
-  const fails=Object.keys(S).filter(k=>k.endsWith(".r")&&S[k]==="fail").length;
+  const allRows=Object.values(SECROWS).flat(), fails=allRows.filter(k=>S[k+".r"]==="fail").length;
   const sigs=(S["sig.eng"]?1:0)+(S["sig.cust"]?1:0);
   // per-section counts for the nav
-  const st={}, failIn=p=>Object.keys(S).some(k=>k.startsWith(p)&&k.endsWith(".r")&&S[k]==="fail");
-  CHECKS.forEach(c=>{st[c.id]=[c.items.filter(([id])=>resultOf(`c.${c.id}.${id}`)).length,c.items.length,failIn("c."+c.id+".")]});
-  st.elec=[ELEC.filter(([id])=>resultOf("e."+id)).length,ELEC.length,failIn("e.")];
-  st.power=[[1,2].filter(n=>resultOf(`p.a${n}`)).length,2,failIn("p.")];
-  st.energy=[["L1","L2","L3","R1","R2","R3"].filter(k=>resultOf(`g.${k}`)).length,6,failIn("g.")];
+  const st={};
+  Object.keys(SECROWS).forEach(s=>{const rows=SECROWS[s];st[s]=[rows.filter(k=>resultOf(k)).length,rows.length,rows.some(k=>S[k+".r"]==="fail")]});
   st.device=[["h.customer","h.model","h.serial"].filter(k=>String(S[k]||"").trim()).length,3,false];
   const used=EQUIP.filter(([id])=>S["q."+id]).length; st.equip=[used?1:0,1,false];
   st.sign=[sigs,2,false];
   document.querySelectorAll("nav.jump button").forEach(b=>{const v=st[b.dataset.key];if(!v)return;const [d,t,f]=v;
     b.querySelector("i").textContent=b.dataset.key==="equip"?(used?used+" used":"–"):(d===t?"✓":d+"/"+t);
     b.classList.toggle("done",d===t&&!f);b.classList.toggle("bad",f)});
-  const keys=["vis","fun","mon","elec","power","energy","sign"].filter(k=>st[k]);
-  const D=keys.reduce((a,k)=>a+st[k][0],0),T=keys.reduce((a,k)=>a+st[k][1],0);
-  document.getElementById("progFill").style.width=(T?Math.round(D/T*100):0)+"%";
+  const keys=[...Object.keys(SECROWS),"sign"];
+  const D=keys.reduce((a,k)=>a+st[k][0],0),Tt=keys.reduce((a,k)=>a+st[k][1],0);
+  document.getElementById("progFill").style.width=(Tt?Math.round(D/Tt*100):0)+"%";
   document.getElementById("status").innerHTML=
-    `<b>${D}/${T}</b> done`+(fails?` · <b style="color:var(--fail)">${fails} fail${fails>1?"s":""}</b>`:"")+
+    `<b>${D}/${Tt}</b> done`+(fails?` · <b style="color:var(--fail)">${fails} fail${fails>1?"s":""}</b>`:"")+
     `<br><span class="${m.length?"no":"ok"}">${m.length?m.length+" without a result":"All results in"}</span> · signed <b>${sigs}/2</b>`;
 }
 let showMissing=false;
@@ -623,7 +707,7 @@ document.getElementById("newBtn").onclick=()=>{const msg=document.getElementById
   if(!armed){armed=true;b.textContent="Tap again to clear this report";msg.innerHTML='<span class="w">Everything on this form will be cleared. Engineer name is kept.</span>';
     setTimeout(()=>{armed=false;b.textContent="Start a new report";msg.innerHTML=""},5000);return}
   const eng=S["s.engName"];S={"s.engName":eng};defaults();armed=false;showMissing=false;b.textContent="Start a new report";msg.innerHTML="";
-  persist();fill();renderPresets();pMsg("");renderSig("eng");renderSig("cust");sigMsg("");applyEngSig();window.scrollTo({top:0,behavior:"smooth"});};
+  persist();render();fill();renderPresets();pMsg("");renderSig("eng");renderSig("cust");sigMsg("");applyEngSig();window.scrollTo({top:0,behavior:"smooth"});};
 
 // PDF
 let downloads=null, saveArmed=false;
@@ -640,9 +724,10 @@ function buildPDF(){
   // Header
   doc.addImage(LOGO,"JPEG",M,10,11,11);doc.addImage(LOGO,"JPEG",W-M-11,10,11,11);
   doc.setFont("helvetica","bold");doc.setFontSize(14);doc.setTextColor(...BR);doc.text("Promed Ltd Service & Test Report Form",W/2,15.5,{align:"center"});
-  doc.setFontSize(10.5);doc.setTextColor(20,30,28);doc.text(S["h.model"]||"Leonardo Mini",W/2,21,{align:"center"});
+  doc.setFontSize(10.5);doc.setTextColor(20,30,28);doc.text(S["h.model"]||T.name,W/2,21,{align:"center"});
   doc.autoTable({...base,startY:26,showHead:false,columnStyles:{0:{fontStyle:"bold",cellWidth:30,fillColor:[236,243,241]},2:{fontStyle:"bold",cellWidth:34,fillColor:[236,243,241]}},
     body:[["Customer",(S["h.customer"]||"")+(S["h.address"]?"\n"+S["h.address"]:""),"Manufacturer",S["h.manufacturer"]||""],
+      ["Model",S["h.model"]||"","Type",S["h.type"]||""],
       ["Serial number",S["h.serial"]||"","Software version",S["h.software"]||""],["Date",fmtDate(S["h.date"]),"Next inspection",fmtDate(S["h.next"])]]});
   CHECKS.forEach(sec=>{doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[[sec.title,"Result","Notes"]],
     columnStyles:{0:{cellWidth:70},1:{cellWidth:30}},didParseCell:d=>colourRes(d,1),
@@ -650,7 +735,8 @@ function buildPDF(){
   doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,
     head:[[{content:`Electrical safety test        Amps: ${S["e.amps"]||"—"}        Test voltage: ${S["e.volts"]||"—"}`,colSpan:5}],["Test","Measured","Limit","Result","Notes"]],
     columnStyles:{0:{cellWidth:66},1:{cellWidth:22},2:{cellWidth:22},3:{cellWidth:26}},didParseCell:d=>colourRes(d,3),
-    body:ELEC.map(([id,name,,pu,op,lim])=>[name.replace("Ω","Ohm"),(S[`e.${id}.v`]?S[`e.${id}.v`]+" "+pu:""),`${op}${lim.toFixed(id==="ins"||id==="load"?2:0)} ${pu}`,res(resultOf("e."+id)),S[`e.${id}.n`]||""])});
+    body:ELEC.map(([id,name,,pu,op,lim,dec])=>[name.replace("Ω","Ohm"),(S[`e.${id}.v`]?S[`e.${id}.v`]+" "+pu:""),`${op}${lim.toFixed(dec)} ${pu}`,res(resultOf("e."+id)),S[`e.${id}.n`]||""])});
+  if(T.mini){
   doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Max power range","Max","Setting 1","Setting 2","Setting 3","Result","Notes"]],didParseCell:d=>colourRes(d,5),
     columnStyles:{5:{cellWidth:24}},
     body:[...[[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>[lab,S[mk]?S[mk]+" W":"",S[`p.a${n}.1`]||"",S[`p.a${n}.2`]||"",S[`p.a${n}.3`]||"",res(resultOf(`p.a${n}`)),S[`p.a${n}.n`]||""])]});
@@ -658,6 +744,13 @@ function buildPDF(){
     [1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);eRows.push([(S[`g.${s}${i}.w`]?S[`g.${s}${i}.w`]+" W":"")+" x 10 s",S[`g.${s}${i}.rec`]?S[`g.${s}${i}.rec`]+" J":"",w==null?"":fmt(w*10)+" J",res(resultOf(`g.${s}${i}`)),S[`g.${s}${i}.n`]||""])})});
   doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Watts x 10 seconds","Record","Target","Result","Notes"]],didParseCell:d=>colourRes(d,3),
     columnStyles:{3:{cellWidth:24}},body:eRows});
+  }
+  OUTS.forEach(o=>{const body=[];
+    o.rows.forEach(r=>{if(r.sub){body.push([{content:r.sub,colSpan:5,styles:{fontStyle:"bold",fillColor:[236,243,241]}}]);return}
+      body.push([r.label,S[r.k+".v"]?S[r.k+".v"]+" "+o.unit:"",r.tgt.replace(/–/g,"-"),res(resultOf(r.k)),S[r.k+".n"]||""])});
+    doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,
+      head:[[{content:o.title+(o.info?"   ("+o.info.split(":")[0].replace(/–/g,"-")+")":""),colSpan:5}],["Setting","Measured","Target","Result","Notes"]],
+      columnStyles:{0:{cellWidth:38},1:{cellWidth:24},2:{cellWidth:34},3:{cellWidth:24}},didParseCell:d=>colourRes(d,3),body})});
   doc.autoTable({...base,startY:doc.lastAutoTable.finalY+4,head:[["Test equipment","Serial #","Manufacturer","Used"]],
     body:EQUIP.map(([id,n,sn,m])=>[n,sn,m,S["q."+id]?"Yes":""])});
   // Signatures
@@ -672,7 +765,7 @@ function buildPDF(){
     doc.setFontSize(8);doc.setTextColor(90,105,100);doc.text(S["sigT."+who]?"Signed "+S["sigT."+who]:"Not signed",x+3,y+41.5)});
   // Footer every page
   const n=doc.getNumberOfPages();for(let p=1;p<=n;p++){doc.setPage(p);doc.setFont("helvetica","normal");doc.setFontSize(7.5);doc.setTextColor(90,105,100);
-    doc.text("QF 50 - 4 Service Test Form Leonardo Mini",M,289);doc.text(`Page ${p} of ${n}`,W-M,289,{align:"right"});
+    doc.text(`${T.qf} Service Test Form ${S["h.model"]||T.name}`,M,289);doc.text(`Page ${p} of ${n}`,W-M,289,{align:"right"});
     doc.text("Promed Ltd, Unit 15, West Newlands Industrial Estate, Somersham, PE28 3EB - Tel 01487 842842",W/2,293,{align:"center"})}
   return doc;
 }
@@ -700,13 +793,18 @@ document.getElementById("saveBtn").onclick=async()=>{
 
 // ---------- Device presets ----------
 // A preset is a device model: it fills model details, power settings and energy-test watts. Customer, serial and results stay per job.
-const PKEYS=["h.model","h.manufacturer","e.amps","e.volts","p.set.1","p.set.2","p.set.3","p.maxL","p.maxR",
+const PKEYS=["tpl","h.model","h.manufacturer","h.type","e.amps","e.volts","p.set.1","p.set.2","p.set.3","p.maxL","p.maxR",
   "g.L1.w","g.L2.w","g.L3.w","g.R1.w","g.R2.w","g.R3.w"];
 const PLOCAL="promed-device-presets-v1";
 // Standard devices, on every phone. Edit here to change them for everyone.
 const BUILTIN=[
-  ["leo-mini-12w-1470","Leonardo Mini 12W - 1470",{"h.manufacturer":"Biolitec","p.maxL":"4","p.maxR":"8","g.L1.w":"1","g.L2.w":"3","g.L3.w":"4","g.R1.w":"4","g.R2.w":"6","g.R3.w":"8"}],
-  ["leo-mini-15w-dual","Leonardo Mini 15W - Dual",{"h.manufacturer":"Biolitec","p.maxL":"11","p.maxR":"4","g.L1.w":"2","g.L2.w":"5","g.L3.w":"11","g.R1.w":"1","g.R2.w":"2","g.R3.w":"4"}]
+  ["leo-mini-12w-1470","Leonardo Mini 12W - 1470",{tpl:"mini","h.manufacturer":"Biolitec","p.maxL":"4","p.maxR":"8","g.L1.w":"1","g.L2.w":"3","g.L3.w":"4","g.R1.w":"4","g.R2.w":"6","g.R3.w":"8"}],
+  ["leo-mini-15w-dual","Leonardo Mini 15W - Dual",{tpl:"mini","h.manufacturer":"Biolitec","p.maxL":"11","p.maxR":"4","g.L1.w":"2","g.L2.w":"5","g.L3.w":"11","g.R1.w":"1","g.R2.w":"2","g.R3.w":"4"}],
+  ["sphinx-jr","Sphinx Jr",{tpl:"sphinx","h.manufacturer":"LISA laser"}],
+  ["leo-dual-200","Leonardo Dual 200",{tpl:"dual200","h.manufacturer":"Biolitec"}],
+  ["leo-dual-100","Leonardo Dual 100",{tpl:"dual100","h.manufacturer":"Biolitec"}],
+  ["revolix-htl","Revolix HTL",{tpl:"revolix","h.manufacturer":"LISA laser"}],
+  ["leo-duster","Leonardo Duster",{tpl:"duster","h.manufacturer":"Biolitec"}]
 ].map(([id,name,f])=>({id,name,builtin:true,fields:PKEYS.map(k=>({k,v:k==="h.model"?name:(f[k]??"")}))}));
 const withBuiltin=list=>[...BUILTIN,...list.filter(p=>!BUILTIN.some(b=>b.id===p.id))];
 let presets=[], pdb=null, pDelArmed=false;
@@ -725,9 +823,9 @@ function renderPresets(){
 }
 function applyPreset(p){
   const f={}; (p.fields||[]).forEach(x=>{if(x&&typeof x.k==="string")f[x.k]=x.v});
-  PKEYS.forEach(k=>{S[k]=k in f?f[k]:""});
-  S["preset.id"]=p.id; fill(); persist();
-  pMsg(`<span class="g">Filled in from “${esc(p.name)}”. Check the details, then carry on with the tests.</span>`);
+  PKEYS.forEach(k=>{S[k]=k in f?f[k]:(k==="tpl"?"mini":"")});
+  S["preset.id"]=p.id; render(); fill(); persist();
+  pMsg(`<span class="g">Filled in from “${esc(p.name)}” (${esc(T.qf)} form). Check the details, then carry on with the tests.</span>`);
 }
 $("presetSel").addEventListener("change",e=>{
   const id=e.target.value; pDelArmed=false; $("pDelete").textContent="Delete preset";
@@ -778,7 +876,7 @@ presets=withBuiltin([]);renderPresets();$("presetSrc").textContent="loading…";
   },()=>useLocalPresets());
 })();
 
-load();fill();renderSig("eng");renderSig("cust");
+load();render();fill();renderSig("eng");renderSig("cust");
 // Keeps a copy on the phone so the form still opens with no signal
 if("serviceWorker" in navigator){
   const hadSW=!!navigator.serviceWorker.controller; let reloaded=false;
