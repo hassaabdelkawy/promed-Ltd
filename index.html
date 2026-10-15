@@ -371,6 +371,12 @@ const TPL={
           rows:[{sub:"980 nm"},...watts([5,10,20,40,60,85]),{sub:"1470 nm"},...watts([2,5,10,15])]},
          {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
           rows:[{sub:"980 nm"},...pulses([5,10,20,40,60,85]),{sub:"1470 nm"},...pulses([2,5,10,15])]}]},
+  leo45:{name:"Leonardo 45",qf:"QF 47-3",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
+    elec:["cont","ins","load",...LEAK],
+    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Power selected vs measured",unit:"W",
+          rows:[{sub:"980 nm"},...watts([2,5,10,20,30]),{sub:"1470 nm"},...watts([2,5,10,15])]},
+         {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
+          rows:[{sub:"980 nm"},...pulses([2,5,10,20,30]),{sub:"1470 nm"},...pulses([2,5,10,15])]}]},
   revolix:{name:"Revolix HTL",qf:"QF 53-2",chk:{vis:[...VIS6,"water","ion","drying","filter"],fun:FUN4,mon:["eyewear","lights","keyswitch","estop","blast"]},
     elec:["cont","ins","load",...LEAK],
     out:[{id:"pw",title:"Power test",nav:"Power",info:"Set value ±20%: Pass/Fail fills in",unit:"W",rows:pct20([5,10,20,40,60,75,100,125,150])},
@@ -803,6 +809,7 @@ const BUILTIN=[
   ["sphinx-jr","Sphinx Jr",{tpl:"sphinx","h.manufacturer":"LISA laser"}],
   ["leo-dual-200","Leonardo Dual 200",{tpl:"dual200","h.manufacturer":"Biolitec"}],
   ["leo-dual-100","Leonardo Dual 100",{tpl:"dual100","h.manufacturer":"Biolitec"}],
+  ["leo-45","Leonardo 45",{tpl:"leo45","h.manufacturer":"Biolitec"}],
   ["revolix-htl","Revolix HTL",{tpl:"revolix","h.manufacturer":"LISA laser"}],
   ["leo-duster","Leonardo Duster",{tpl:"duster","h.manufacturer":"Biolitec"}]
 ].map(([id,name,f])=>({id,name,builtin:true,fields:PKEYS.map(k=>({k,v:k==="h.model"?name:(f[k]??"")}))}));
