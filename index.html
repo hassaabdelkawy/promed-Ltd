@@ -113,9 +113,7 @@ section.sheet>h2 .allpass{text-transform:none;letter-spacing:0;font-size:12px}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[data-v=pass][aria-pressed=true]{background:var(--pass);color:#fff}
 .seg button[data-v=fail][aria-pressed=true]{background:var(--fail);color:#fff}
-.seg button[data-v=note][aria-pressed=true]{background:var(--warn);color:#fff}
-.row.want-notes .notes{display:block}
-.row.want-notes .addnote{display:none}
+.seg button[data-v=na][aria-pressed=true]{background:var(--muted);color:#fff}
 .row.below .addnote,.row.below .notes{grid-row:4}
 .seg .auto{font-weight:500;font-size:10px;display:block;opacity:.85;line-height:1}
 .meas{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -147,7 +145,6 @@ td.tgt{font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:n
 .pad .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;color:#006557;font-weight:700;font-size:15px}
 .pad.has .hint{display:none}
 .row.noted .name::after{content:"Validated by notes";display:block;font-size:12px;font-weight:600;color:var(--warn)}
-.row.want-notes.missing .notes input{border-color:var(--warn)}
 .sheetSign{position:fixed;inset:0;z-index:50;background:var(--sheet);display:flex;flex-direction:column;gap:10px;
   padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(12px + env(safe-area-inset-bottom,0px));touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none}
 .sgHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -348,8 +345,8 @@ let saveT;
 function persist(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));if(S["s.engName"])localStorage.setItem(ENGKEY,S["s.engName"])}catch(e){}},250)}
 function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function seg(k){return `<div class="seg" role="group"><button type="button" data-k="${k}" data-v="pass" aria-pressed="false">Pass</button><button type="button" data-k="${k}" data-v="fail" aria-pressed="false">Fail</button><button type="button" data-k="${k}" data-v="note" aria-pressed="false">Notes</button></div>`}
-const RLABEL={pass:"Pass",fail:"Fail",note:"Notes"};
+function seg(k){return `<div class="seg" role="group"><button type="button" data-k="${k}" data-v="pass" aria-pressed="false">Pass</button><button type="button" data-k="${k}" data-v="fail" aria-pressed="false">Fail</button><button type="button" data-k="${k}" data-v="na" aria-pressed="false">N/A</button></div>`}
+const RLABEL={pass:"Pass",fail:"Fail",na:"N/A"};
 
 // Build pass/fail check sections
 const addNote=`<button type="button" class="addnote" data-addnote>+ Add note</button>`;
@@ -417,9 +414,7 @@ document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset
   const m=k.match(/^e\.(\w+)\.v$/); if(m){autoElec(m[1]); fill();} else if(k==="e.amps"||k==="e.volts"){fill();} else {if(k.startsWith("g."))targets(); status();}
   persist();});
 document.addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;
-  const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();
-  // "Notes" needs the reason written down: open the notes box
-  if(S[k]==="note"){const inp=b.closest(".row").querySelector(".notes input");if(inp&&!inp.value.trim())inp.focus()}});
+  const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();});
 document.getElementById("plus1y").onclick=()=>{const d=S["h.date"]?new Date(S["h.date"]+"T12:00"):new Date();d.setFullYear(d.getFullYear()+1);
   S["h.next"]=d.toISOString().slice(0,10);fill();persist();};
 
@@ -452,8 +447,7 @@ document.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.target.tagName!=="
   const i=all.indexOf(e.target);if(i>-1&&all[i+1])all[i+1].focus();else e.target.blur();});
 
 // Completeness
-// "note" = validated by notes (neither pass nor fail); it only counts once a note is written.
-// A note typed without choosing a result also counts as validated by notes.
+// A note typed without choosing Pass / Fail / N/A counts as validated by notes ("note"; older drafts may also store it as the result).
 function resultOf(k){const r=S[k+".r"], note=!!(S[k+".n"]||"").trim();
   if(r==="note")return note?"note":"";if(r)return r;return note?"note":""}
 function missing(){
@@ -467,7 +461,7 @@ function missing(){
 function status(){
   const m=missing(); const set=new Set(m.map(x=>x[0]));
   document.querySelectorAll("[data-row]").forEach(r=>{const k=r.dataset.row;r.classList.toggle("missing",showMissing&&set.has(k));
-    const note=!!(S[k+".n"]||"").trim();r.classList.toggle("noted",!S[k+".r"]&&note);r.classList.toggle("has-notes",note);r.classList.toggle("want-notes",S[k+".r"]==="note")});
+    const note=!!(S[k+".n"]||"").trim();r.classList.toggle("noted",!S[k+".r"]&&note);r.classList.toggle("has-notes",note)});
   const fails=Object.keys(S).filter(k=>k.endsWith(".r")&&S[k]==="fail").length;
   const sigs=(S["sig.eng"]?1:0)+(S["sig.cust"]?1:0);
   // per-section counts for the nav
@@ -639,8 +633,8 @@ function fmtDate(v){if(!v)return "";const [y,m,d]=v.split("-");return `${d}/${m}
 function buildPDF(){
   const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"});
   const W=210,M=14,BR=[0,101,87];
-  const res=(r)=>r==="pass"?"PASS":r==="fail"?"FAIL":r==="note"?"SEE NOTES":"";
-  const colourRes=(data,col)=>{if(data.section==="body"&&data.column.index===col){const t=String(data.cell.raw||"");if(t.startsWith("PASS"))data.cell.styles.textColor=[29,122,62];if(t==="FAIL")data.cell.styles.textColor=[180,35,24];if(t==="SEE NOTES")data.cell.styles.textColor=[161,92,0];data.cell.styles.fontStyle="bold"}};
+  const res=(r)=>r==="pass"?"PASS":r==="fail"?"FAIL":r==="na"?"N/A":r==="note"?"SEE NOTES":"";
+  const colourRes=(data,col)=>{if(data.section==="body"&&data.column.index===col){const t=String(data.cell.raw||"");if(t.startsWith("PASS"))data.cell.styles.textColor=[29,122,62];if(t==="FAIL")data.cell.styles.textColor=[180,35,24];if(t==="N/A")data.cell.styles.textColor=[92,107,103];if(t==="SEE NOTES")data.cell.styles.textColor=[161,92,0];data.cell.styles.fontStyle="bold"}};
   const base={theme:"grid",margin:{left:M,right:M,bottom:22},styles:{fontSize:8.5,cellPadding:1.6,lineColor:[200,208,206],lineWidth:.2,textColor:[20,30,28]},headStyles:{fillColor:BR,textColor:255,fontStyle:"bold"}};
   // Header
   doc.addImage(LOGO,"JPEG",M,10,11,11);doc.addImage(LOGO,"JPEG",W-M-11,10,11,11);
