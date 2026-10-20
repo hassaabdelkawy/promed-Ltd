@@ -726,12 +726,13 @@ function buildPDF(){
   const W=210,M=14,BR=[0,101,87];
   const res=(r)=>r==="pass"?"PASS":r==="fail"?"FAIL":r==="na"?"N/A":r==="note"?"SEE NOTES":"";
   const colourRes=(data,col)=>{if(data.section==="body"&&data.column.index===col){const t=String(data.cell.raw||"");if(t.startsWith("PASS"))data.cell.styles.textColor=[29,122,62];if(t==="FAIL")data.cell.styles.textColor=[180,35,24];if(t==="N/A")data.cell.styles.textColor=[92,107,103];if(t==="SEE NOTES")data.cell.styles.textColor=[161,92,0];data.cell.styles.fontStyle="bold"}};
-  const base={theme:"grid",margin:{left:M,right:M,bottom:22},styles:{fontSize:8.5,cellPadding:{top:1,bottom:1,left:1.6,right:1.6},lineColor:[200,208,206],lineWidth:.2,textColor:[20,30,28]},headStyles:{fillColor:BR,textColor:255,fontStyle:"bold"}};
+  const BM=16; // space kept clear above the footer
+  const base={theme:"grid",margin:{left:M,right:M,top:12,bottom:BM},styles:{fontSize:8.5,cellPadding:{top:.75,bottom:.75,left:1.6,right:1.6},lineColor:[200,208,206],lineWidth:.2,textColor:[20,30,28]},headStyles:{fillColor:BR,textColor:255,fontStyle:"bold"}};
   // Header
   doc.addImage(LOGO,"JPEG",M,10,11,11);doc.addImage(LOGO,"JPEG",W-M-11,10,11,11);
   doc.setFont("helvetica","bold");doc.setFontSize(14);doc.setTextColor(...BR);doc.text("Promed Ltd Service & Test Report Form",W/2,15.5,{align:"center"});
   doc.setFontSize(10.5);doc.setTextColor(20,30,28);doc.text(S["h.model"]||T.name,W/2,21,{align:"center"});
-  doc.autoTable({...base,startY:26,showHead:false,columnStyles:{0:{fontStyle:"bold",cellWidth:30,fillColor:[236,243,241]},2:{fontStyle:"bold",cellWidth:34,fillColor:[236,243,241]}},
+  doc.autoTable({...base,startY:24.5,showHead:false,columnStyles:{0:{fontStyle:"bold",cellWidth:30,fillColor:[236,243,241]},2:{fontStyle:"bold",cellWidth:34,fillColor:[236,243,241]}},
     body:[["Customer",(S["h.customer"]||"")+(S["h.address"]?"\n"+S["h.address"]:""),"Manufacturer",S["h.manufacturer"]||""],
       ["Model",S["h.model"]||"","Type",S["h.type"]||""],
       ["Serial number",S["h.serial"]||"","Software version",S["h.software"]||""],["Date",fmtDate(S["h.date"]),"Next inspection",fmtDate(S["h.next"])]]});
@@ -742,25 +743,28 @@ function buildPDF(){
     head:[[{content:`Electrical safety test        Amps: ${S["e.amps"]||"—"}        Test voltage: ${S["e.volts"]||"—"}`,colSpan:5}],["Test","Measured","Limit","Result","Notes"]],
     columnStyles:{0:{cellWidth:66},1:{cellWidth:22},2:{cellWidth:22},3:{cellWidth:26}},didParseCell:d=>colourRes(d,3),
     body:ELEC.map(([id,name,,pu,op,lim,dec])=>[name.replace("Ω","Ohm"),(S[`e.${id}.v`]?S[`e.${id}.v`]+" "+pu:""),`${op}${lim.toFixed(dec)} ${pu}`,res(resultOf("e."+id)),S[`e.${id}.n`]||""])});
+  // Page 2 starts after the electrical safety test (unless page 1 already overflowed onto page 2)
+  let top=doc.getNumberOfPages()===1; if(top)doc.addPage();
+  const next=()=>{if(top){top=false;return 14}return doc.lastAutoTable.finalY+3};
   if(T.mini){
-  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+3,head:[["Max power range","Max","Setting 1","Setting 2","Setting 3","Result","Notes"]],didParseCell:d=>colourRes(d,5),
+  doc.autoTable({...base,startY:next(),head:[["Max power range","Max","Setting 1","Setting 2","Setting 3","Result","Notes"]],didParseCell:d=>colourRes(d,5),
     columnStyles:{5:{cellWidth:24}},
     body:[...[[1,"Left","p.maxL"],[2,"Right","p.maxR"]].map(([n,lab,mk])=>[lab,S[mk]?S[mk]+" W":"",S[`p.a${n}.1`]||"",S[`p.a${n}.2`]||"",S[`p.a${n}.3`]||"",res(resultOf(`p.a${n}`)),S[`p.a${n}.n`]||""])]});
   const eRows=[];["L","R"].forEach(s=>{eRows.push([{content:"Energy v time — "+(s==="L"?"left":"right"),colSpan:5,styles:{fontStyle:"bold",fillColor:[236,243,241]}}]);
     [1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);eRows.push([(S[`g.${s}${i}.w`]?S[`g.${s}${i}.w`]+" W":"")+" x 10 s",S[`g.${s}${i}.rec`]?S[`g.${s}${i}.rec`]+" J":"",w==null?"":fmt(w*10)+" J",res(resultOf(`g.${s}${i}`)),S[`g.${s}${i}.n`]||""])})});
-  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+3,head:[["Watts x 10 seconds","Record","Target","Result","Notes"]],didParseCell:d=>colourRes(d,3),
+  doc.autoTable({...base,startY:next(),head:[["Watts x 10 seconds","Record","Target","Result","Notes"]],didParseCell:d=>colourRes(d,3),
     columnStyles:{3:{cellWidth:24}},body:eRows});
   }
   OUTS.forEach(o=>{const body=[];
     o.rows.forEach(r=>{if(r.sub){body.push([{content:r.sub,colSpan:5,styles:{fontStyle:"bold",fillColor:[236,243,241]}}]);return}
       body.push([r.label,S[r.k+".v"]?S[r.k+".v"]+" "+o.unit:"",r.tgt.replace(/–/g,"-"),res(resultOf(r.k)),S[r.k+".n"]||""])});
-    doc.autoTable({...base,startY:doc.lastAutoTable.finalY+3,
+    doc.autoTable({...base,startY:next(),
       head:[[{content:o.title+(o.info?"   ("+o.info.split(":")[0].replace(/–/g,"-")+")":""),colSpan:5}],["Setting","Measured","Target","Result","Notes"]],
       columnStyles:{0:{cellWidth:38},1:{cellWidth:24},2:{cellWidth:34},3:{cellWidth:24}},didParseCell:d=>colourRes(d,3),body})});
-  doc.autoTable({...base,startY:doc.lastAutoTable.finalY+3,head:[["Test equipment","Serial #","Manufacturer","Used"]],
+  doc.autoTable({...base,startY:next(),head:[["Test equipment","Serial #","Manufacturer","Used"]],
     body:EQUIP.map(([id,n,sn,m])=>[n,sn,m,S["q."+id]?"Yes":""])});
   // Signatures: compact boxes so the whole report fits on two pages
-  const SH=30; let y=doc.lastAutoTable.finalY+4; if(y>297-22-SH){doc.addPage();y=14}
+  const SH=30; let y=doc.lastAutoTable.finalY+4; if(y>297-BM-SH){doc.addPage();y=14}
   const boxW=(W-2*M-8)/2;
   [["Engineer","eng",S["s.engName"]],["Customer","cust",S["s.custName"]]].forEach(([lab,who,name],i)=>{
     const x=M+i*(boxW+8);doc.setDrawColor(200,208,206);doc.setLineWidth(.3);doc.rect(x,y,boxW,SH);
