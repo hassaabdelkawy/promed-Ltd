@@ -377,7 +377,7 @@ const TPL={
           rows:[{sub:"980 nm"},...watts([2,5,10,20,30]),{sub:"1470 nm"},...watts([2,5,10,15])]},
          {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
           rows:[{sub:"980 nm"},...pulses([2,5,10,20,30]),{sub:"1470 nm"},...pulses([2,5,10,15])]}]},
-  ceralas:{name:"Ceralas",abbr:"CER",qf:"QF 35-5",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keyswitch","estop"]},
+  ceralas:{name:"Ceralas",abbr:"CER",qf:"QF 35-6",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keyswitch","estop"]},
     elec:["cont","ins","load",...LEAK],
     out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Set value ±20%: Pass/Fail fills in",unit:"W",rows:pct20([1,5,10,15,20])},
          {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",rows:pulses([1,5,10,15,20])}]},
