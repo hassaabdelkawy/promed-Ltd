@@ -779,8 +779,10 @@ function buildPDF(){
     doc.text("Promed Ltd, Unit 15, West Newlands Industrial Estate, Somersham, PE28 3EB - Tel 01487 842842",W/2,293,{align:"center"})}
   return doc;
 }
-// Saved file name: test date (year-month-day), laser abbreviation, TR (test report), e.g. "2026-11-04 LM TR.pdf"
-function fname(){return `${S["h.date"]||today()} ${T.abbr} TR.pdf`}
+// Saved file name: test date (year-month-day), laser abbreviation, serial number, TR (test report), e.g. "2026-11-04 LM SN12345 TR.pdf"
+function fname(){
+  const serial=String(S["h.serial"]||"").replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g," ").trim().slice(0,40);
+  return [S["h.date"]||today(),T.abbr,serial,"TR"].filter(Boolean).join(" ")+".pdf"}
 
 document.getElementById("saveBtn").onclick=async()=>{
   const m=missing(); const sigs=!!S["sig.eng"]&&!!S["sig.cust"];
