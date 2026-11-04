@@ -786,7 +786,9 @@ function buildPDF(){
 // Saved file name: test date (year-month-day), laser abbreviation, serial number, TR (test report), e.g. "2026-11-04 LM SN12345 TR.pdf"
 function fname(){
   const serial=String(S["h.serial"]||"").replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g," ").trim().slice(0,40);
-  return [S["h.date"]||today(),T.abbr,serial,"TR"].filter(Boolean).join(" ")+".pdf"}
+  // Ceralas: the abbreviation is the first letter of the Type field (falls back to C when Type is empty)
+  const abbr=T===TPL.ceralas?((String(S["h.type"]||"").trim().match(/[A-Za-z0-9]/)||["C"])[0].toUpperCase()):T.abbr;
+  return [S["h.date"]||today(),abbr,serial,"TR"].filter(Boolean).join(" ")+".pdf"}
 
 document.getElementById("saveBtn").onclick=async()=>{
   const m=missing(); const sigs=!!S["sig.eng"]&&!!S["sig.cust"];
