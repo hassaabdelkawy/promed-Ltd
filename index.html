@@ -57,7 +57,25 @@ nav.jump .navtitle{display:none}
   section.sheet{scroll-margin-top:16px}
   .bar .in,.bar .msg{max-width:1100px}
 }
-header.top{display:flex;align-items:center;gap:12px;padding-block:4px}
+header.top{display:flex;align-items:center;gap:12px;padding-block:4px;flex-wrap:wrap}
+.modes{display:flex;margin-left:auto;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sheet)}
+.modes button{font:inherit;font-size:13px;font-weight:700;border:0;background:none;color:var(--muted);padding:0 14px;min-height:40px;cursor:pointer}
+.modes button+button{border-left:1px solid var(--line)}
+.modes button[aria-selected=true]{background:var(--brand);color:var(--brand-ink)}
+@media (max-width:520px){.modes{margin-left:0;width:100%}.modes button{flex:1}}
+body.mode-service .wrap{display:flex}
+body.mode-service .wrap>:not(header.top):not(#srvForm):not(footer.form){display:none!important}
+#srvForm{display:flex;flex-direction:column;gap:14px}
+#srvForm .pad-grid{display:grid;gap:12px;padding:14px}
+#srvForm textarea{min-height:88px}
+#srvForm textarea.big{min-height:170px}
+.part{display:grid;grid-template-columns:76px minmax(0,1fr) minmax(0,1fr) 44px;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);align-items:end}
+.part .x{font:inherit;font-weight:700;min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--sheet);color:var(--fail);cursor:pointer}
+@media (max-width:520px){.part{grid-template-columns:76px minmax(0,1fr) 44px}.part .mat{grid-column:1/-1;grid-row:2}}
+.partsAdd{padding:10px 14px}
+.row.missing-f,label.f.missing-f{box-shadow:inset 4px 0 0 var(--warn);background:var(--warn-soft)}
+label.f.missing-f{padding:6px 6px 6px 10px;border-radius:8px}
+.srvNew{display:flex;justify-content:center}
 header.top img{width:36px;height:36px;border-radius:6px}
 header.top h1{font-size:20px;margin:0;text-wrap:balance;line-height:1.2}
 header.top p{margin:2px 0 0;color:var(--muted);font-size:13px}
@@ -189,6 +207,10 @@ footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
       <h1>Service &amp; Test Report</h1>
       <p id="formSub">Promed Ltd · Leonardo Mini · QF 50-5</p>
     </div>
+    <div class="modes" role="tablist" aria-label="Report type">
+      <button type="button" role="tab" data-mode="test" aria-selected="true">Test report</button>
+      <button type="button" role="tab" data-mode="service" aria-selected="false">Service report</button>
+    </div>
   </header>
 
   <nav class="jump" id="jump" aria-label="Sections"></nav>
@@ -282,6 +304,51 @@ footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
       </div>
     </div>
   </section>
+
+  <div id="srvForm" hidden>
+    <section class="sheet">
+      <h2>1. Product</h2>
+      <div class="grid">
+        <label class="f" id="rf_brand">Brand name<input type="text" data-r="brand" list="srvBrands" autocomplete="off"><datalist id="srvBrands"></datalist></label>
+        <label class="f" id="rf_serial">Serial no / LOT / manufacturing date<input type="text" data-r="serial"></label>
+      </div>
+    </section>
+    <section class="sheet">
+      <h2>2. Reason for service / inspection</h2>
+      <div class="pad-grid"><label class="f" id="rf_reason">Reason<textarea data-r="reason" rows="3"></textarea></label></div>
+    </section>
+    <section class="sheet">
+      <h2>3. Work performed</h2>
+      <div class="pad-grid"><label class="f" id="rf_work">Work performed<textarea class="big" data-r="work" rows="7"></textarea></label></div>
+      <div id="srvChecks"></div>
+    </section>
+    <section class="sheet">
+      <h2>4. Material</h2>
+      <div id="srvParts"></div>
+      <div class="partsAdd"><button type="button" class="chip" id="srvAddPart">+ Add another part</button></div>
+    </section>
+    <section class="sheet">
+      <h2>5. Documentation <small>List of enclosed documents</small></h2>
+      <div class="pad-grid"><label class="f">Enclosed documents<textarea data-r="docs" rows="3"></textarea></label></div>
+    </section>
+    <section class="sheet">
+      <h2>Sign-off</h2>
+      <div class="sigs">
+        <div class="sig">
+          <label class="f">Name<select data-r="name"><option value="">— Choose engineer —</option><option>Andrew Koronowski</option><option>Conor Whittaker</option><option>Hassan Kawy</option><option>Stephen Allen</option></select></label>
+          <div style="height:10px"></div>
+          <label class="f">Date<input type="date" data-r="date"></label>
+        </div>
+        <div class="sig">
+          <h3>Signature</h3>
+          <button type="button" class="pad" id="pad_srv" data-sign="srv"><img alt="Signature" hidden><span class="hint">✍ Tap to sign</span></button>
+          <div class="sigbar"><span id="t_srv"></span><button type="button" class="chip" id="srvClearSig">Clear</button></div>
+        </div>
+      </div>
+    </section>
+    <div class="srvNew"><button type="button" class="btn danger" id="srvNew">Start a new service report</button></div>
+    <div class="msg" id="srvNewMsg" style="text-align:center"></div>
+  </div>
 
   <footer class="form">Promed Ltd, Unit 15, West Newlands Industrial Estate, Somersham, PE28 3EB · Tel 01487 842842</footer>
   <div style="display:flex;justify-content:center"><button type="button" class="btn danger" id="newBtn">Start a new report</button></div>
@@ -399,7 +466,7 @@ let T=TPL.mini, CHECKS=[], ELEC=[], OUTS=[], OUTROW={};
 const EQUIP=[["st1","Safe Test 60","03H-0380","Seaward"],["vega1","Vega Display","3134757","Ophir"],["cw1","CW Head","538 316","Ophir"],["st2","Safe Test 60","19R-4925","Seaward"],["vega2","Vega Display","3134752","Ophir"],["cw2","CW Head","3139675","Ophir"]];
 const DEFAULTS={"h.model":"Leonardo Mini","tpl":"mini"};
 
-let S={};
+let S={}, R={}, mode="test"; // S = test report draft, R = service report draft
 function load(){try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)||{};}catch(e){S={}}
   defaults();}
 function defaults(){
@@ -517,7 +584,7 @@ document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset
   else if(g){autoEnergy(g[1]); fill();}
   else if(k==="e.amps"||k==="e.volts"){fill();} else {status();}
   persist();});
-document.addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;
+document.addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b||!b.dataset.k)return;
   const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();});
 document.getElementById("plus1y").onclick=()=>{const d=S["h.date"]?new Date(S["h.date"]+"T12:00"):new Date();d.setFullYear(d.getFullYear()+1);
   S["h.next"]=d.toISOString().slice(0,10);fill();persist();};
@@ -563,6 +630,7 @@ function missing(){
   return out;
 }
 function status(){
+  if(mode==="service"){srvStatus();return}
   const m=missing(); const set=new Set(m.map(x=>x[0]));
   document.querySelectorAll("[data-row]").forEach(r=>{const k=r.dataset.row;r.classList.toggle("missing",showMissing&&set.has(k));
     const note=!!(S[k+".n"]||"").trim();r.classList.toggle("noted",!S[k+".r"]&&note);r.classList.toggle("has-notes",note)});
@@ -588,11 +656,11 @@ let showMissing=false;
 
 // Signatures: tap a box to open a full-screen signing sheet (the page can't scroll underneath)
 function renderSig(who){
-  const box=document.getElementById("pad_"+who), img=box.querySelector("img"), src=S["sig."+who];
+  const D=who==="srv"?R:S, box=document.getElementById("pad_"+who), img=box.querySelector("img"), src=D["sig."+who];
   img.hidden=!src; if(src)img.src=src; else img.removeAttribute("src");
   box.classList.toggle("has",!!src);
   box.setAttribute("aria-label",src?"Signed. Tap to sign again":"Tap to sign");
-  document.getElementById("t_"+who).textContent=S["sigT."+who]?"Signed "+S["sigT."+who]:"Not signed yet";
+  document.getElementById("t_"+who).textContent=D["sigT."+who]?"Signed "+D["sigT."+who]:"Not signed yet";
 }
 const ov=document.getElementById("signOv"), scv=document.getElementById("signCv"), sctx=scv.getContext("2d"), sArea=document.getElementById("signArea");
 let sWho=null, strokes=[], cur=null;
@@ -615,8 +683,8 @@ ov.addEventListener("gesturestart",e=>e.preventDefault());
 let prevOverflow=["",""];
 function openSign(who){
   sWho=who;strokes=[];cur=null;
-  document.getElementById("signTitle").textContent=(who==="eng"?"Engineer":"Customer")+" signature";
-  const nm=S[who==="eng"?"s.engName":"s.custName"];
+  document.getElementById("signTitle").textContent=(who==="cust"?"Customer":"Engineer")+" signature";
+  const nm=who==="srv"?R.name:S[who==="eng"?"s.engName":"s.custName"];
   document.getElementById("signLine").textContent=nm&&nm.trim()?nm.trim():"Sign above the line";
   prevOverflow=[document.documentElement.style.overflow,document.body.style.overflow];
   document.documentElement.style.overflow="hidden";document.body.style.overflow="hidden";
@@ -637,8 +705,10 @@ document.getElementById("sgDone").onclick=()=>{
   const w=Math.max(40,x1-x0),h=Math.max(20,y1-y0),k=2;
   const out=document.createElement("canvas");out.width=Math.round(w*k);out.height=Math.round(h*k);
   const c=out.getContext("2d");c.setTransform(k,0,0,k,0,0);sStyle(c);strokes.forEach(st=>sPath(c,st,x0,y0));
-  S["sig."+who]=out.toDataURL("image/png");S["sigWH."+who]=[w,h];
-  const d=new Date();S["sigT."+who]=d.toLocaleDateString("en-GB")+" "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  const D=who==="srv"?R:S;
+  D["sig."+who]=out.toDataURL("image/png");D["sigWH."+who]=[w,h];
+  const d=new Date();D["sigT."+who]=d.toLocaleDateString("en-GB")+" "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  if(who==="srv"){R["sig.srv.auto"]="";closeSign();renderSig(who);persistR();status();return}
   if(who==="eng")S["sig.eng.auto"]="";
   closeSign();renderSig(who);persist();status();if(who==="eng")sigButtons();
 };
@@ -796,7 +866,18 @@ function fname(){
   const abbr=T===TPL.ceralas?((String(S["h.type"]||"").trim().match(/[A-Za-z0-9]/)||["C"])[0].toUpperCase()):T.abbr;
   return [S["h.date"]||today(),abbr,serial,"TR"].filter(Boolean).join(" ")+".pdf"}
 
+// Hands the finished PDF to the phone's share sheet, or downloads it on a computer
+async function deliverPDF(pdf,name,okMsg){
+  try{
+    const file=new File([pdf.output("blob")],name,{type:"application/pdf"});
+    // Phones: the share sheet (Save to Files, email, WhatsApp…) works from a home-screen shortcut, where plain downloads don't
+    if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:file.name});
+    else pdf.save(name);
+    setMsg(`<span class="g">${okMsg}</span>`)}
+  catch(e){const c=e&&e.code;setMsg(c==="declined"||(e&&e.name==="AbortError")?"Save cancelled.":c==="rate_limited"?'<span class="w">A save prompt is already open.</span>':`<span class="e">Couldn't save the PDF${c?" ("+c+")":""}.</span>`)}
+}
 document.getElementById("saveBtn").onclick=async()=>{
+  if(mode==="service"){saveService();return}
   const m=missing(); const sigs=!!S["sig.eng"]&&!!S["sig.cust"];
   if((m.length||!sigs)&&!saveArmed){showMissing=true;status();saveArmed=true;
     const first=document.querySelector(".row.missing,[data-row].missing");if(first)first.scrollIntoView({behavior:"smooth",block:"center"});
@@ -804,13 +885,9 @@ document.getElementById("saveBtn").onclick=async()=>{
     setTimeout(()=>{saveArmed=false},8000);return}
   saveArmed=false;
   if(!window.jspdf){setMsg('<span class="e">The PDF tool didn\'t load. Check your signal and reopen the page.</span>');return}
-  try{setMsg("Creating PDF…");const pdf=buildPDF();
-    const file=new File([pdf.output("blob")],fname(),{type:"application/pdf"});
-    // Phones: the share sheet (Save to Files, email, WhatsApp…) works from a home-screen shortcut, where plain downloads don't
-    if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:file.name});
-    else pdf.save(fname());
-    setMsg('<span class="g">PDF saved. Tap "Start a new report" when you\'re ready for the next one.</span>')}
-  catch(e){const c=e&&e.code;setMsg(c==="declined"||(e&&e.name==="AbortError")?"Save cancelled.":c==="rate_limited"?'<span class="w">A save prompt is already open.</span>':`<span class="e">Couldn't save the PDF${c?" ("+c+")":""}.</span>`)}
+  setMsg("Creating PDF…");
+  try{await deliverPDF(buildPDF(),fname(),'PDF saved. Tap "Start a new report" when you\'re ready for the next one.')}
+  catch(e){setMsg(`<span class="e">Couldn't create the PDF.</span>`)}
 };
 
 // ---------- Device presets ----------
@@ -902,7 +979,150 @@ presets=withBuiltin([]);renderPresets();$("presetSrc").textContent="loading…";
   },()=>useLocalPresets());
 })();
 
+// ---------- Service report (QF 36-4) ----------
+// A separate form with its own draft, so one can be filled in without touching a test report in progress.
+const RKEY="promed-service-draft-v1", MODEKEY="promed-report-mode", QF_SR="QF 36-4";
+const SRCHECKS=[["screen","Screen function"],["laser","Laser output"],["elec","Electrical safety test"]];
+const srvForm=document.getElementById("srvForm");
+let persistRT, srvShowMissing=false, srvArmed=false, srvNewArmed=false;
+function persistRNow(){clearTimeout(persistRT);try{localStorage.setItem(RKEY,JSON.stringify(R))}catch(e){}}
+function persistR(){clearTimeout(persistRT);persistRT=setTimeout(persistRNow,250)}
+function srvDefaults(){
+  if(!Array.isArray(R.parts)||!R.parts.length)R.parts=[{q:"",m:"",p:""}];
+  if(!R.date)R.date=today();
+  if(!R.name){R.name=S["s.engName"]||"";if(!R.name){try{R.name=localStorage.getItem(ENGKEY)||""}catch(e){}}}
+}
+// Starting an empty service report: bring over the device from the test report being worked on
+function srvPrefill(){
+  if(String(R.brand||"").trim()||String(R.serial||"").trim())return;
+  if(S["preset.id"]||String(S["h.serial"]||"").trim()){R.brand=S["h.model"]||"";R.serial=S["h.serial"]||""}
+}
+function srvRenderParts(){
+  document.getElementById("srvParts").innerHTML=R.parts.map((p,i)=>`<div class="part">
+    <label class="f">Quantity<input type="text" inputmode="decimal" data-part="${i}.q" value="${esc(p.q||"")}"></label>
+    <label class="f mat">Material<input type="text" data-part="${i}.m" value="${esc(p.m||"")}"></label>
+    <label class="f">Part no.<input type="text" data-part="${i}.p" value="${esc(p.p||"")}"></label>
+    <button type="button" class="x" data-partdel="${i}" aria-label="Remove this part">×</button></div>`).join("");
+}
+function srvFill(){
+  srvForm.querySelectorAll("[data-r]").forEach(el=>{el.value=R[el.dataset.r]??""});
+  srvForm.querySelectorAll("[data-c]").forEach(b=>b.setAttribute("aria-pressed",String(R["c."+b.dataset.c]===b.dataset.v)));
+  srvRenderParts();renderSig("srv");srvStatus();
+}
+function srvMissing(){
+  const m=[];
+  [["brand","brand name"],["serial","serial no"],["reason","reason for service"],["work","work performed"]].forEach(([k,lab])=>{if(!String(R[k]||"").trim())m.push(["rf_"+k,lab])});
+  SRCHECKS.forEach(([k,lab])=>{if(!R["c."+k])m.push(["rc_"+k,lab+" result"])});
+  return m;
+}
+function srvStatus(){
+  const m=srvMissing(), signed=R["sig.srv"]?1:0, T0=7+1, D0=T0-1-m.length+signed;
+  document.querySelectorAll("#srvForm .missing-f").forEach(e=>e.classList.remove("missing-f"));
+  if(srvShowMissing)m.forEach(([id])=>document.getElementById(id).classList.add("missing-f"));
+  const fails=SRCHECKS.filter(([k])=>R["c."+k]==="fail").length;
+  document.getElementById("progFill").style.width=Math.round(D0/T0*100)+"%";
+  document.getElementById("status").innerHTML=`<b>${D0}/${T0}</b> done`+(fails?` · <b style="color:var(--fail)">${fails} fail${fails>1?"s":""}</b>`:"")+
+    `<br><span class="${m.length?"no":"ok"}">${m.length?m.length+" still to fill in":"All filled in"}</span> · signed <b>${signed}/1</b>`;
+}
+// A saved engineer signature fills in by itself, and goes again if a different engineer is picked
+async function srvApplySig(){
+  const name=R.name||"";
+  if(R["sig.srv.auto"]&&R["sig.srv.auto"]!==name){delete R["sig.srv"];delete R["sigT.srv"];delete R["sigWH.srv"];R["sig.srv.auto"]=""}
+  if(name&&!R["sig.srv"]){const v=await getSaved(name);
+    if(name===R.name&&v&&v.img&&!R["sig.srv"]){R["sig.srv"]=v.img;R["sigWH.srv"]=v.wh||[3,1];R["sig.srv.auto"]=name;
+      const d=new Date();R["sigT.srv"]=d.toLocaleDateString("en-GB")+" "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}}
+  renderSig("srv");persistR();srvStatus();
+}
+document.getElementById("srvChecks").innerHTML=SRCHECKS.map(([k,lab])=>`<div class="row" id="rc_${k}"><div class="name">${esc(lab)}</div>
+  <div class="seg" role="group">${[["pass","Pass"],["fail","Fail"],["na","N/A"]].map(([v,t])=>`<button type="button" data-c="${k}" data-v="${v}" aria-pressed="false">${t}</button>`).join("")}</div></div>`).join("");
+document.getElementById("srvBrands").innerHTML=BUILTIN.map(p=>`<option value="${esc(p.name)}">`).join("");
+srvForm.addEventListener("input",e=>{const t=e.target;
+  if(t.dataset.r){R[t.dataset.r]=t.value;if(t.dataset.r==="name")srvApplySig()}
+  else if(t.dataset.part){const [i,f]=t.dataset.part.split(".");R.parts[i][f]=t.value}
+  else return;
+  srvStatus();persistR()});
+srvForm.addEventListener("click",e=>{
+  const c=e.target.closest("[data-c]");
+  if(c){const k="c."+c.dataset.c;R[k]=R[k]===c.dataset.v?"":c.dataset.v;srvFill();persistR();return}
+  const d=e.target.closest("[data-partdel]");
+  if(d){R.parts.splice(+d.dataset.partdel,1);if(!R.parts.length)R.parts=[{q:"",m:"",p:""}];srvRenderParts();persistR()}});
+document.getElementById("srvAddPart").onclick=()=>{R.parts.push({q:"",m:"",p:""});srvRenderParts();persistR();
+  const qs=srvForm.querySelectorAll("[data-part$='.q']");qs[qs.length-1].focus()};
+document.getElementById("srvClearSig").onclick=()=>{delete R["sig.srv"];delete R["sigT.srv"];delete R["sigWH.srv"];R["sig.srv.auto"]="";renderSig("srv");persistR();srvStatus()};
+document.getElementById("srvNew").onclick=()=>{const b=document.getElementById("srvNew"),msg=document.getElementById("srvNewMsg");
+  if(!srvNewArmed){srvNewArmed=true;b.textContent="Tap again to clear this report";msg.innerHTML='<span class="w">Everything on this service report will be cleared. Engineer name is kept.</span>';
+    setTimeout(()=>{srvNewArmed=false;b.textContent="Start a new service report";msg.innerHTML=""},5000);return}
+  srvNewArmed=false;b.textContent="Start a new service report";msg.innerHTML="";
+  R={name:R.name};srvShowMissing=false;srvDefaults();srvPrefill();srvFill();srvApplySig();persistR();setMsg("");window.scrollTo({top:0,behavior:"smooth"})};
+
+function setMode(m){
+  mode=m;document.body.classList.toggle("mode-service",m==="service");srvForm.hidden=m!=="service";
+  document.querySelectorAll(".modes button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.mode===m)));
+  document.querySelector("header.top h1").textContent=m==="service"?"Service Report":"Service & Test Report";
+  document.getElementById("formSub").textContent=m==="service"?`Promed Ltd · ${QF_SR}`:`Promed Ltd · ${T.name} · ${T.qf}`;
+  saveArmed=false;srvArmed=false;setMsg("");
+  if(m==="service"){srvDefaults();srvPrefill();srvFill();srvApplySig()}
+  status();try{localStorage.setItem(MODEKEY,m)}catch(e){}
+}
+document.querySelector(".modes").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(!b||b.dataset.mode===mode)return;setMode(b.dataset.mode);window.scrollTo(0,0)});
+
+function buildServicePDF(){
+  const {jsPDF}=window.jspdf, doc=new jsPDF({unit:"mm",format:"a4"}), W=210, M=14, BR=[0,101,87], SOFT=[236,243,241];
+  const base={theme:"grid",margin:{left:M,right:M,top:12,bottom:16},styles:{fontSize:9,cellPadding:{top:1.2,bottom:1.2,left:1.8,right:1.8},lineColor:[200,208,206],lineWidth:.2,textColor:[20,30,28]},headStyles:{fillColor:BR,textColor:255,fontStyle:"bold"}};
+  const sub={fillColor:SOFT,textColor:[20,30,28],fontStyle:"bold"};
+  const res=r=>r==="pass"?"PASS":r==="fail"?"FAIL":r==="na"?"N/A":"";
+  const next=()=>doc.lastAutoTable.finalY+3;
+  doc.addImage(LOGO,"JPEG",M,10,11,11);doc.addImage(LOGO,"JPEG",W-M-11,10,11,11);
+  doc.setFont("helvetica","bold");doc.setFontSize(14);doc.setTextColor(...BR);doc.text("Promed Ltd Service Report",W/2,17,{align:"center"});
+  doc.autoTable({...base,startY:25,head:[[{content:"1. Product",colSpan:2}],[{content:"Brand name",styles:sub},{content:"Serial no / LOT / manufacturing date",styles:sub}]],body:[[R.brand||"",R.serial||""]]});
+  const section=(title,text,minH,extra)=>doc.autoTable({...base,startY:next(),head:[[title]],body:[[text||""]],bodyStyles:{minCellHeight:minH},...extra});
+  section("2. Reason for service / reason for inspection",R.reason,18);
+  section("3. Work performed",R.work,56);
+  doc.autoTable({...base,startY:doc.lastAutoTable.finalY,showHead:"firstPage",head:[SRCHECKS.map(([,lab])=>({content:lab,styles:sub}))],body:[SRCHECKS.map(([k])=>res(R["c."+k]))],
+    didParseCell:d=>{if(d.section!=="body")return;const t=String(d.cell.raw||"");d.cell.styles.fontStyle="bold";
+      if(t==="PASS")d.cell.styles.textColor=[29,122,62];if(t==="FAIL")d.cell.styles.textColor=[180,35,24];if(t==="N/A")d.cell.styles.textColor=[92,107,103]}});
+  const parts=(R.parts||[]).filter(p=>String(p.q||"").trim()||String(p.m||"").trim()||String(p.p||"").trim()).map(p=>[p.q||"",p.m||"",p.p||""]);
+  while(parts.length<4)parts.push(["","",""]);
+  doc.autoTable({...base,startY:next(),head:[[{content:"4. Material",colSpan:3}],[{content:"Quantity",styles:sub},{content:"Material",styles:sub},{content:"Part no.",styles:sub}]],
+    columnStyles:{0:{cellWidth:24},2:{cellWidth:52}},bodyStyles:{minCellHeight:7},body:parts});
+  section("5. Documentation (list of enclosed documents)",R.docs,14);
+  const sig=R["sig.srv"], wh=R["sigWH.srv"]||[3,1];
+  doc.autoTable({...base,startY:next(),head:[[{content:"Name",styles:sub},{content:"Date",styles:sub},{content:"Signature",styles:sub}]],body:[[R.name||"",fmtDate(R.date),""]],
+    columnStyles:{0:{cellWidth:62},1:{cellWidth:34}},bodyStyles:{minCellHeight:20},
+    didDrawCell:d=>{if(d.section!=="body"||d.column.index!==2||!sig)return;
+      const ar=wh[0]/wh[1];let h=d.cell.height-3,w=h*ar;if(w>d.cell.width-4){w=d.cell.width-4;h=w/ar}
+      doc.addImage(sig,"PNG",d.cell.x+2,d.cell.y+1.5,w,h)}});
+  const n=doc.getNumberOfPages();for(let p=1;p<=n;p++){doc.setPage(p);doc.setFont("helvetica","normal");doc.setFontSize(7.5);doc.setTextColor(90,105,100);
+    doc.text(`${QF_SR} Service Report`,M,289);doc.text(`Page ${p} of ${n}`,W-M,289,{align:"right"});
+    doc.text("Promed Ltd, Unit 15, West Newlands Industrial Estate, Somersham, PE28 3EB - Tel 01487 842842",W/2,293,{align:"center"})}
+  return doc;
+}
+// Saved file name, like test reports with SR (service report) at the end: "2026-11-05 LD LD-04512 SR.pdf"
+function srvFname(){
+  const clean=v=>String(v||"").replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g," ").trim();
+  const brand=clean(R.brand), low=brand.toLowerCase();
+  const tpl=Object.values(TPL).sort((a,b)=>b.name.length-a.name.length).find(t=>low.startsWith(t.name.toLowerCase()));
+  const abbr=tpl?(tpl===TPL.ceralas?"C":tpl.abbr):brand.slice(0,40);
+  return [R.date||today(),abbr,clean(R.serial).slice(0,40),"SR"].filter(Boolean).join(" ")+".pdf";
+}
+async function saveService(){
+  const m=srvMissing(), unsigned=!R["sig.srv"];
+  if((m.length||unsigned)&&!srvArmed){srvShowMissing=true;srvStatus();srvArmed=true;
+    const first=document.querySelector("#srvForm .missing-f");if(first)first.scrollIntoView({behavior:"smooth",block:"center"});
+    const parts=[];if(m.length)parts.push(m.length+" item"+(m.length>1?"s are":" is")+" not filled in (highlighted)");if(unsigned)parts.push("the signature is missing");
+    const warn=parts.join(" and ");
+    setMsg(`<span class="w">${warn[0].toUpperCase()+warn.slice(1)}. Tap Save PDF again to save anyway.</span>`);
+    setTimeout(()=>{srvArmed=false},8000);return}
+  srvArmed=false;
+  if(!window.jspdf){setMsg('<span class="e">The PDF tool didn\'t load. Check your signal and reopen the page.</span>');return}
+  setMsg("Creating PDF…");
+  try{await deliverPDF(buildServicePDF(),srvFname(),'PDF saved. Tap "Start a new service report" when you\'re ready for the next one.')}
+  catch(e){setMsg(`<span class="e">Couldn't create the PDF.</span>`)}
+}
+try{R=JSON.parse(localStorage.getItem(RKEY)||"{}")||{}}catch(e){R={}}
+
 load();render();fill();renderSig("eng");renderSig("cust");
+try{if(localStorage.getItem(MODEKEY)==="service")setMode("service")}catch(e){}
 // Keeps a copy on the phone so the form still opens with no signal
 if("serviceWorker" in navigator){
   const hadSW=!!navigator.serviceWorker.controller; let reloaded=false;
