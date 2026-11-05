@@ -247,7 +247,7 @@ footer.form{color:var(--muted);font-size:12px;text-align:center;padding-top:4px}
   </section>
 
   <section class="sheet" id="sec-energy">
-    <h2>Energy v time <small>Target = watts × 10 s</small></h2>
+    <h2>Energy v time <small>Target = watts × 10 s, ±20%: Pass/Fail fills in</small></h2>
     <div id="energy"></div>
   </section>
 
@@ -347,34 +347,36 @@ const LEAK=["elN","elR","elsfN","elsfR","enN","enR","ennoN","ennoR","eneoN","ene
 const VIS6=["labels","signs","manual","complete","conn","surfaces"], FUN4=["footswitch","beam","interlocks","display"];
 const fmt=n=>Math.round(n*100)/100+"";
 // Output-test rows: {sub} starts a group; otherwise {label, tgt (shown target), min/max (auto pass/fail when given)}
-const pct20=ws=>ws.map(w=>({label:w+" W",min:w*.8,max:w*1.2,tgt:fmt(w*.8)+"–"+fmt(w*1.2)+" W"}));
-const watts=ws=>ws.map(w=>({label:w+" W",tgt:"set "+w+" W"}));
-const pulses=ws=>ws.map(w=>({label:w+" W",tgt:"expect "+fmt(w*3)+" J"}));
-const PULSE_INFO="Pulse 1 s, pause 0.3 s, 3 pulses";
+// ±20% around a target; the rounding stops floating-point errors failing a reading exactly on the limit (3 × 1.2 = 3.5999…)
+const band=t=>({min:Math.round(t*800)/1000,max:Math.round(t*1200)/1000});
+const pct20=ws=>ws.map(w=>{const b=band(w);return {label:w+" W",...b,tgt:fmt(b.min)+"–"+fmt(b.max)+" W"}});
+const near=(label,t,unit)=>{const b=band(t);return {label,...b,tgt:fmt(t)+" "+unit+" ("+fmt(b.min)+"–"+fmt(b.max)+")"}};
+const pulses=ws=>ws.map(w=>near(w+" W",w*3,"J"));
+const PULSE_INFO="Pulse 1 s, pause 0.3 s, 3 pulses, ±20%: Pass/Fail fills in";
 const TPL={
   mini:{name:"Leonardo Mini",abbr:"LM",qf:"QF 50-5",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
     elec:["load","ins",...LEAK],mini:true},
   sphinx:{name:"Sphinx Jr",abbr:"LPL",qf:"QF 46-4",chk:{vis:[...VIS6,"water","ion","drying"],fun:FUN4,mon:["eyewear","lights","keyswitch","estop","blast"]},
     elec:["cont","load",...LEAK],
-    out:[{id:"ho",title:"Holmium test",nav:"Holmium",info:"Display setting vs measured power",unit:"W",
+    out:[{id:"ho",title:"Holmium test",nav:"Holmium",info:"J × Hz ±20%: Pass/Fail fills in",unit:"W",
       rows:[[.5,1],[1.5,1],[2.5,1],[3.5,1],[.5,5],[1.5,5],[2.5,5],[3.5,5],[.5,10],[1.5,10],[2.5,10],[3,9],[3.5,8],[.5,20],[3.3,9]]
-        .map(([j,hz])=>({label:j.toFixed(1)+" J · "+hz+" Hz",tgt:"J×Hz = "+fmt(j*hz)+" W"}))}]},
+        .map(([j,hz])=>near(j.toFixed(1)+" J · "+hz+" Hz",j*hz,"W"))}]},
   dual200:{name:"Leonardo Dual 200",abbr:"Leo",qf:"QF 51-4",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
     elec:["cont","ins","load",...LEAK],
-    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Power selected vs measured",unit:"W",
-          rows:[{sub:"980 nm"},...watts([10,25,50,100,130,160]),{sub:"1470 nm"},...watts([5,10,20,30,40])]},
+    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Set value ±20%: Pass/Fail fills in",unit:"W",
+          rows:[{sub:"980 nm"},...pct20([10,25,50,100,130,160]),{sub:"1470 nm"},...pct20([5,10,20,30,40])]},
          {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
           rows:[{sub:"980 nm"},...pulses([10,25,50,100,130,160]),{sub:"1470 nm"},...pulses([5,10,20,30,40])]}]},
   dual100:{name:"Leonardo Dual 100",abbr:"Leo",qf:"QF 52-3",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
     elec:["cont","ins","load",...LEAK],
-    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Power selected vs measured",unit:"W",
-          rows:[{sub:"980 nm"},...watts([5,10,20,40,60,85]),{sub:"1470 nm"},...watts([2,5,10,15])]},
+    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Set value ±20%: Pass/Fail fills in",unit:"W",
+          rows:[{sub:"980 nm"},...pct20([5,10,20,40,60,85]),{sub:"1470 nm"},...pct20([2,5,10,15])]},
          {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
           rows:[{sub:"980 nm"},...pulses([5,10,20,40,60,85]),{sub:"1470 nm"},...pulses([2,5,10,15])]}]},
   leo45:{name:"Leonardo 45",abbr:"Leo",qf:"QF 47-4",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop"]},
     elec:["cont","ins","load",...LEAK],
-    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Power selected vs measured",unit:"W",
-          rows:[{sub:"980 nm"},...watts([2,5,10,20,30]),{sub:"1470 nm"},...watts([2,5,10,15])]},
+    out:[{id:"cw",title:"Continuous mode test",nav:"Continuous",info:"Set value ±20%: Pass/Fail fills in",unit:"W",
+          rows:[{sub:"980 nm"},...pct20([2,5,10,20,30]),{sub:"1470 nm"},...pct20([2,5,10,15])]},
          {id:"pu",title:"Pulsed mode test",nav:"Pulsed",info:PULSE_INFO,unit:"J",
           rows:[{sub:"980 nm"},...pulses([2,5,10,20,30]),{sub:"1470 nm"},...pulses([2,5,10,15])]}]},
   ceralas:{name:"Ceralas",abbr:"CER",qf:"QF 35-6",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keyswitch","estop"]},
@@ -384,8 +386,8 @@ const TPL={
   revolix:{name:"Revolix HTL",abbr:"HTL",qf:"QF 53-3",chk:{vis:[...VIS6,"water","ion","drying","filter"],fun:FUN4,mon:["eyewear","lights","keyswitch","estop","blast"]},
     elec:["cont","ins","load",...LEAK],
     out:[{id:"pw",title:"Power test",nav:"Power",info:"Set value ±20%: Pass/Fail fills in",unit:"W",rows:pct20([5,10,20,40,60,75,100,125,150])},
-         {id:"jo",title:"Joules reading",nav:"Joules",info:"Power selected × 10 seconds",unit:"J",
-          rows:[5,10,20,40,60,75,100,125,150].map(w=>({label:w+" W × 10 s",tgt:"expect "+w*10+" J"}))}]},
+         {id:"jo",title:"Joules reading",nav:"Joules",info:"Power × 10 s ±20%: Pass/Fail fills in",unit:"J",
+          rows:[5,10,20,40,60,75,100,125,150].map(w=>near(w+" W × 10 s",w*10,"J"))}]},
   duster:{name:"Leonardo Duster",abbr:"LD",qf:"QF 54-2",chk:{vis:VIS6,fun:FUN4,mon:["eyewear","lights","keycode","estop","blast"]},
     elec:["cont","ins","load",...LEAK],
     out:[{id:"cw",title:"CW mode test",nav:"CW mode",info:"Min–max: Pass/Fail fills in",unit:"W",rows:pct20([20,30,40,50,60])},
@@ -495,21 +497,25 @@ function fill(){
 }
 function num(v){if(v==null||String(v).trim()==="")return null;const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n}
 // Fill Pass/Fail from a limit unless the engineer picked a result themselves
-function autoSet(k,ok){
-  const v=num(S[k+".v"]), rk=k+".r", ak=k+".auto";
+function autoSet(k,ok,v=num(S[k+".v"])){
+  const rk=k+".r", ak=k+".auto";
   if(v==null){ if(S[ak]){S[rk]="";S[ak]=false} return }
   if(S[rk] && !S[ak]) return; // manual override stays
   S[rk]=ok(v)?"pass":"fail"; S[ak]=true;
 }
 function autoElec(id){const row=ELEC_ALL.find(r=>r[0]===id);autoSet("e."+id,v=>row[4]===">"?v>row[5]:v<row[5])}
 function autoOut(k){const r=OUTROW[k];if(r&&r.min!=null)autoSet(k,v=>v>=r.min&&v<=r.max)}
+// Leonardo Mini energy test: recorded joules against watts × 10 s, ±20%
+function autoEnergy(k){const w=num(S[k+".w"]), rec=num(S[k+".rec"]);if(w==null){autoSet(k,()=>false,null);return}
+  const b=band(w*10);autoSet(k,v=>v>=b.min&&v<=b.max,rec)}
 function targets(){if(!T.mini)return;["L","R"].forEach(s=>[1,2,3].forEach(i=>{const w=num(S[`g.${s}${i}.w`]);document.getElementById(`tgt_${s}${i}`).textContent=w==null?"– J":fmt(w*10)+" J"}))}
 
 document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;
   S[k]=e.target.type==="checkbox"?e.target.checked:e.target.value;
-  const m=k.match(/^e\.(\w+)\.v$/), o=k.match(/^(o\..+)\.v$/);
+  const m=k.match(/^e\.(\w+)\.v$/), o=k.match(/^(o\..+)\.v$/), g=k.match(/^(g\.[LR]\d)\.(w|rec)$/);
   if(m){autoElec(m[1]); fill();} else if(o&&OUTROW[o[1]]&&OUTROW[o[1]].min!=null){autoOut(o[1]); fill();}
-  else if(k==="e.amps"||k==="e.volts"){fill();} else {if(k.startsWith("g."))targets(); status();}
+  else if(g){autoEnergy(g[1]); fill();}
+  else if(k==="e.amps"||k==="e.volts"){fill();} else {status();}
   persist();});
 document.addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;
   const k=b.dataset.k; S[k]=S[k]===b.dataset.v?"":b.dataset.v; S[k.replace(/\.r$/,".auto")]=false; fill(); persist();});
@@ -842,7 +848,9 @@ function renderPresets(){
 function applyPreset(p){
   const f={}; (p.fields||[]).forEach(x=>{if(x&&typeof x.k==="string")f[x.k]=x.v});
   PKEYS.forEach(k=>{S[k]=k in f?f[k]:(k==="tpl"?"mini":"")});
-  S["preset.id"]=p.id; render(); fill(); persist();
+  S["preset.id"]=p.id; render();
+  if(T.mini)["L","R"].forEach(s=>[1,2,3].forEach(i=>autoEnergy(`g.${s}${i}`)));
+  fill(); persist();
   pMsg(`<span class="g">Filled in from “${esc(p.name)}” (${esc(T.qf)} form). Check the details, then carry on with the tests.</span>`);
 }
 $("presetSel").addEventListener("change",e=>{
